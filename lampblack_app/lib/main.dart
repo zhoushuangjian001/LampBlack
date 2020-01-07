@@ -23,48 +23,51 @@ class LoginRoute extends StatelessWidget {
               "./assets/login_bg.jpg",
               fit: BoxFit.cover,
             ),
-            constraints: BoxConstraints.expand()),
+            constraints: BoxConstraints.expand()
+        ),
         Align(
-          alignment: Alignment.topCenter,
+          alignment: Alignment.center,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                height: 120,
-              ),
               Container(
+                color: Colors.red,
+                padding: const EdgeInsets.only(bottom: 30),
                 child: Text(
                   "物联网油烟管理平台",
-                  style: TextStyle(fontSize: 50, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: 50,
+                    //color: Colors.white
+                  ),
                 ),
-                height: 100,
+              ),
+              Container(
+                color: Colors.green,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    ItemButton(
+                      title:"商家",
+                      icon: Icon(Icons.shop),
+                      methodBlock: (){
+
+                      }
+                    ),
+                    SizedBox(
+
+                    ),
+                    ItemButton(
+                      title: "运维",
+                      icon: Icon(Icons.opacity),
+                      methodBlock: (){
+
+                      },
+                    )
+                  ],
+                ),
               )
             ],
-          ),
-        ),
-        Center(
-          child: Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                ItemButton(
-                    title: "店家", 
-                    icon: Icon(
-                      Icons.ac_unit,
-                      size: 35
-                    ), 
-                    methodBlock: () {}),
-                ItemButton(
-                    title: "运维",
-                    icon: Icon(
-                      Icons.access_alarm,
-                      size: 35
-                    ),
-                    methodBlock: () {}),
-              ],
-            ),
-            width: 300,
-            height: 100,
-          ),
+          )
         )
       ],
     );
