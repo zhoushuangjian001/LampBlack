@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lampblack_app/hotemanager.dart';
 
 main() => runApp(LampBlackApp());
 
@@ -9,6 +10,9 @@ class LampBlackApp extends StatelessWidget {
       home: Scaffold(
         body: LoginRoute(),
       ),
+      routes: {
+        "hote":(context) => HoteManager()
+      },
     );
   }
 }
@@ -31,26 +35,29 @@ class LoginRoute extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                color: Colors.red,
-                padding: const EdgeInsets.only(bottom: 30),
                 child: Text(
                   "物联网油烟管理平台",
                   style: TextStyle(
-                    fontSize: 50,
-                    //color: Colors.white
+                    fontSize: 60,
+                    color: Colors.white
                   ),
                 ),
               ),
+              SizedBox(
+                height: 100,
+              ),
               Container(
-                color: Colors.green,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     ItemButton(
-                      title:"商家",
-                      icon: Icon(Icons.shop),
+                      title:"店家",
+                      icon: Icon(
+                        Icons.home,
+                        size: 60,
+                      ),
                       methodBlock: (){
-
+                        Navigator.pushNamed(context, "hote");
                       }
                     ),
                     SizedBox(
@@ -58,7 +65,10 @@ class LoginRoute extends StatelessWidget {
                     ),
                     ItemButton(
                       title: "运维",
-                      icon: Icon(Icons.opacity),
+                      icon: Icon(
+                        Icons.person,
+                        size: 60,
+                      ),
                       methodBlock: (){
 
                       },
@@ -85,27 +95,29 @@ class ItemButton extends StatelessWidget {
     return GestureDetector(
       child: Container(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
-            Expanded(
+            Container(
               child: icon,
             ),
-            Container(
-              child: Text(title),
-            ),
             SizedBox(
-              height: 20,
+              height: 10,
+            ),
+            Container(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 25
+                ),
+              )
             )
           ],
         ),
-        width: 100,
-        height: 100,
+        width: 160,
+        height: 160,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          color: Colors.white54,
+          borderRadius: BorderRadius.circular(80),
+          color: Colors.white70,
         ),
       ),
       onTap: methodBlock,
