@@ -88,17 +88,36 @@ class DarwBgImageOfDial {
 
     canvas.save();
     for (int i = 51; i<= 100; i++) {
-      if(i % 10 == 0) {
-        canvas.rotate(0.062);
-        int index = (i/10).ceil();
-        drawLongLineOfDial(canvas, paintMain, halfHeight, dialValueArray[index]);
+      if (i % 2 == 0) {
+        canvas.rotate(0.09666);
+        if(i % 10 == 0) {       
+          int index = (i/10).ceil();
+          drawLongLineOfDial(canvas, paintMain, halfHeight, dialValueArray[index]);
+        } else {
+          drawShortLineOfDial(canvas, otherPaint, halfHeight);
+        }
       }
     }
     canvas.restore();
+
+    canvas.save();
+    for (int i = 49 ; i >= 0; i--) {
+      if(i % 2 == 0) {
+        canvas.rotate(- 0.09666);
+        if(i % 10 == 0) {
+          int index = (i/10).ceil();
+          drawLongLineOfDial(canvas, paintMain, halfHeight, dialValueArray[index]);
+        } else {
+          drawShortLineOfDial(canvas, otherPaint, halfHeight);
+        }
+      }
+    }
+    canvas.restore();
+
     canvas.restore();
   }
 
-  // 画线(长线)
+  // 绘制长刻度
   void drawLongLineOfDial(Canvas canvas, Paint paint, double halfHeight, String text){
     canvas.drawLine(new Offset(0, -halfHeight), new Offset(0, -halfHeight + 15), paint);
 
@@ -117,4 +136,10 @@ class DarwBgImageOfDial {
       double halfPositionY = - halfHeight + 19;
       textPainter.paint(canvas, new Offset(halfPositionX,halfPositionY ));
   }
+
+  // 绘制短刻度
+  void drawShortLineOfDial(Canvas canvas, Paint paint, double halfHeight) {
+    canvas.drawLine(new Offset(0, -halfHeight), new Offset(0, -halfHeight + 5), paint);
+  }
+
 }
