@@ -11,14 +11,15 @@ class _DialDraw extends State<DialDraw> {
   Size boardSize;
   // 表格间隔
   double tableSpace;
-  Picture _picture;
-
+  Picture _dialPicture;
+  Picture _indicatorPicture;
 
   @override
   void initState() {
     super.initState();
-    boardSize = new Size(400, 400);
-    _picture = DarwBgImageOfDial(boardSize).getBgImage();
+    boardSize = new Size(250, 250);
+    _dialPicture = DarwBgImageOfDial(boardSize).getBgImage();
+    _indicatorPicture = DrawIndicator(boardSize).drawIndicator();
   }
 
   @override
@@ -26,21 +27,28 @@ class _DialDraw extends State<DialDraw> {
     return Center(
       child: CustomPaint(
         size: boardSize,
-        painter: DialPainter(_picture),
+        painter: DialPainter(_dialPicture, _indicatorPicture),
       ),
     );
   }
 }
 
+/// 绘制刻度盘
 class DialPainter extends CustomPainter {
 
   final Picture bgImagePicture;
-  DialPainter(this.bgImagePicture);
+  final Picture indicatorPicture;
+
+  DialPainter(this.bgImagePicture, this.indicatorPicture);
 
   @override
   void paint(Canvas canvas, Size size) {
     // 绘制背景
     canvas.drawPicture(bgImagePicture);
+    // 绘制单位
+    drawUnit(canvas, size, "mg/m3", "油烟浓度");
+    // 绘制指针
+    drawIndicatorPicture(canvas, size);
   }
 
   @override
@@ -48,6 +56,57 @@ class DialPainter extends CustomPainter {
     return true;
   }
 
+  // 绘制指针
+  void drawIndicatorPicture(Canvas canvas, Size size){
+    double halfWidth = size.width * 0.5;
+    double halfHeight = size.height *0.5;
+    canvas.save();
+    canvas.translate(halfWidth, halfHeight);
+    canvas.rotate(0.0966);
+    canvas.translate(-halfWidth, -halfHeight);
+    canvas.drawPicture(indicatorPicture);
+    canvas.restore();
+  }
+
+  // 绘制单位
+  void drawUnit(Canvas canvas, Size size, String text, String title) {
+    double halfWidth = size.width * 0.5;
+    double halfHeight = size.height *0.5;
+    canvas.save();
+    canvas.translate(halfWidth, halfHeight);
+
+    // 文字(单位)
+    TextPainter unitTextPainter = TextPainter()
+      ..textDirection = TextDirection.ltr
+      ..text = new TextSpan(
+        text: text,
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.red
+        )
+      )
+      ..layout();
+    double pointX = - unitTextPainter.size.width * 0.5;
+    double pointY = -halfHeight + 50;
+    unitTextPainter.paint(canvas, Offset(pointX, pointY));
+
+    // 文字(标题)
+    TextPainter titleTextPainter = TextPainter()
+      ..textDirection = TextDirection.ltr
+      ..text = new TextSpan(
+        text: title,
+        style: TextStyle(
+          fontSize: 20,
+          color: Colors.black
+        )
+      )
+      ..layout();
+    double titlePointX = - titleTextPainter.size.width * 0.5;
+    double titlePointY = halfHeight - 50;
+    titleTextPainter.paint(canvas, Offset(titlePointX,titlePointY));
+
+    canvas.restore();
+  }
 }
 
 
@@ -172,4 +231,41 @@ class DarwBgImageOfDial {
     canvas.drawLine(new Offset(0, -halfHeight), new Offset(0, -halfHeight + 10), paint);
   }
 
+}
+
+
+/// 绘制指针
+class DrawIndicator {
+  final PictureRecorder _recorder = PictureRecorder();
+  final Size size;
+
+  DrawIndicator(this.size);
+
+  // 绘制 path
+  Picture drawIndicator(){
+    Canvas canvas = Canvas(_recorder);
+    canvas.clipRect(new Rect.fromLTWH(0, 0, size.width, size.height));
+
+    double halfWidth = size.width * 0.5;
+    double halfHeight = size.height * 0.5;
+
+    var indicatorPath = Path()
+      ..moveTo(-5, 20)
+      ..lineTo(5, 20)
+      ..lineTo(8, 30)
+      ..lineTo(0.5, - halfHeight + 40)
+      ..lineTo(-0.5, - halfHeight + 40)
+      ..lineTo(-8, 30)
+      ..close();
+    canvas.save();
+    canvas.translate(halfWidth, halfHeight);
+    var paint = new Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(indicatorPath, paint);
+    paint.color = Colors.black;
+    canvas.drawCircle(new Offset(0, 0), 5, paint);
+    canvas.restore();
+    return _recorder.endRecording();
+  }
 }
