@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:lampblack_app/hotemanager.dart';
 
-main() => runApp(LampBlackApp());
+void main(){
+  debugPaintSizeEnabled = true;
+  return runApp(LampBlackApp());
+}
 
 class LampBlackApp extends StatelessWidget {
   @override

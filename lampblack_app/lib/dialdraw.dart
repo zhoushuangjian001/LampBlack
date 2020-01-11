@@ -3,31 +3,32 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class DialDraw extends StatefulWidget {
-  _DialDraw createState() => _DialDraw();
-}
-
-class _DialDraw extends State<DialDraw> {
-  Size boardSize;
+// ignore: must_be_immutable
+class DialDraw extends StatelessWidget {
+  final String title;
+  final String unit;
+  final double value;
+  // 便利构造函数
+  DialDraw(this.title, this.unit, this.value);
   // 表格间隔
   double tableSpace;
   Picture _dialPicture;
   Picture _indicatorPicture;
-
-  @override
+  Size boardSize;
+  // 初始化参数函数
   void initState() {
-    super.initState();
     boardSize = new Size(250, 250);
     _dialPicture = DarwBgImageOfDial(boardSize).getBgImage();
-    _indicatorPicture = DrawIndicator(boardSize).drawIndicator();
+    _indicatorPicture = DrawIndicator(boardSize, value).drawIndicator();
   }
 
   @override
   Widget build(BuildContext context) {
+    initState();
     return Center(
       child: CustomPaint(
-        size: boardSize,
-        painter: DialPainter(_dialPicture, _indicatorPicture),
+        size: new Size(250, 250),
+        painter: DialPainter(_dialPicture, _indicatorPicture, title, unit, value),
       ),
     );
   }
@@ -38,17 +39,21 @@ class DialPainter extends CustomPainter {
 
   final Picture bgImagePicture;
   final Picture indicatorPicture;
-
-  DialPainter(this.bgImagePicture, this.indicatorPicture);
+  final String title;
+  final String unit;
+  final double value;
+  DialPainter(this.bgImagePicture, this.indicatorPicture, this.title, this.unit, this.value);
 
   @override
   void paint(Canvas canvas, Size size) {
     // 绘制背景
     canvas.drawPicture(bgImagePicture);
     // 绘制单位
-    drawUnit(canvas, size, "mg/m3", "油烟浓度");
+    drawUnit(canvas, size, unit, title);
+    // 绘制实时数据
+    drawRealTimeValue(canvas, size, value);
     // 绘制指针
-    drawIndicatorPicture(canvas, size);
+    drawIndicatorPicture(canvas, size, value);
   }
 
   @override
@@ -57,18 +62,29 @@ class DialPainter extends CustomPainter {
   }
 
   // 绘制指针
-  void drawIndicatorPicture(Canvas canvas, Size size){
+  void drawIndicatorPicture(Canvas canvas, Size size, double value){
     double halfWidth = size.width * 0.5;
     double halfHeight = size.height *0.5;
+    double unitAngle  = 2 * pi / 130;
+    double angle;
+    // 处理越界值
+    if(value < 0) value = 0;
+    if(value > 100) value = 100;
+    // 计算角度
+    if(value <= 50) {
+      angle = - (50 - value) * unitAngle;
+    } else {
+      angle = (value - 50) * unitAngle;
+    }
     canvas.save();
     canvas.translate(halfWidth, halfHeight);
-    canvas.rotate(0.0966);
+    canvas.rotate(angle);
     canvas.translate(-halfWidth, -halfHeight);
     canvas.drawPicture(indicatorPicture);
     canvas.restore();
   }
 
-  // 绘制单位
+  // 绘制单位 & 标题
   void drawUnit(Canvas canvas, Size size, String text, String title) {
     double halfWidth = size.width * 0.5;
     double halfHeight = size.height *0.5;
@@ -107,9 +123,40 @@ class DialPainter extends CustomPainter {
 
     canvas.restore();
   }
+
+  /// 绘制实时显示数据
+  void drawRealTimeValue(Canvas canvas, Size size, double value) {
+    double halfW = size.width * 0.5;
+    double halfH = size.height * 0.5;
+    Color textColor;
+    if(value <= 20) {
+      textColor = Colors.green;
+    } else if (value > 20 && value <= 80) {
+      textColor = Colors.blue;
+    } else {
+      textColor = Colors.red;
+    }
+    canvas.save();
+    canvas.translate(halfW, halfH);
+
+    TextPainter textPainter = TextPainter()
+      ..textDirection = TextDirection.ltr
+      ..text = TextSpan(
+        text: value.toString(),
+        style: TextStyle(
+          fontSize: 30,
+          color: textColor
+        )
+      )
+      ..layout();
+    double textPointX = - textPainter.size.width * 0.5;
+    double textPointY = halfH - 80;
+    textPainter.paint(canvas, Offset(textPointX, textPointY));
+    canvas.restore();
+  }
 }
 
-
+/// 绘制背景刻度盘
 class DarwBgImageOfDial {
   // 刻度值
   var dialValueArray = ["0","10","20","30","40","50","60","70","80","90","100"];
@@ -238,8 +285,8 @@ class DarwBgImageOfDial {
 class DrawIndicator {
   final PictureRecorder _recorder = PictureRecorder();
   final Size size;
-
-  DrawIndicator(this.size);
+  final double value;
+  DrawIndicator(this.size, this.value);
 
   // 绘制 path
   Picture drawIndicator(){
@@ -259,8 +306,17 @@ class DrawIndicator {
       ..close();
     canvas.save();
     canvas.translate(halfWidth, halfHeight);
+    // 颜色处理
+    Color paintColor;
+    if (value <= 20) {
+      paintColor = Colors.green;
+    } else if (value > 20 && value <= 80) {
+      paintColor = Colors.blue;
+    } else {
+      paintColor = Colors.red;
+    }
     var paint = new Paint()
-      ..color = Colors.blue
+      ..color = paintColor
       ..style = PaintingStyle.fill;
     canvas.drawPath(indicatorPath, paint);
     paint.color = Colors.black;
