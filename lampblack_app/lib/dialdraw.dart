@@ -17,7 +17,7 @@ class DialDraw extends StatelessWidget {
   Size boardSize;
   // 初始化参数函数
   void initState() {
-    boardSize = new Size(250, 250);
+    boardSize = new Size(190, 190);
     _dialPicture = DarwBgImageOfDial(boardSize).getBgImage();
     _indicatorPicture = DrawIndicator(boardSize, value).drawIndicator();
   }
@@ -27,7 +27,7 @@ class DialDraw extends StatelessWidget {
     initState();
     return Center(
       child: CustomPaint(
-        size: new Size(250, 250),
+        size: new Size(190, 190),
         painter: DialPainter(_dialPicture, _indicatorPicture, title, unit, value),
       ),
     );
@@ -112,13 +112,13 @@ class DialPainter extends CustomPainter {
       ..text = new TextSpan(
         text: title,
         style: TextStyle(
-          fontSize: 20,
+          fontSize: 18,
           color: Colors.black
         )
       )
       ..layout();
     double titlePointX = - titleTextPainter.size.width * 0.5;
-    double titlePointY = halfHeight - 50;
+    double titlePointY = halfHeight - 40;
     titleTextPainter.paint(canvas, Offset(titlePointX,titlePointY));
 
     canvas.restore();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lampblack_app/dialdraw.dart';
+import 'package:lampblack_app/linechartsmall.dart';
 
 class HoteManager extends StatefulWidget {
   _HoteManager createState() => _HoteManager();
@@ -30,29 +31,14 @@ class _HoteManager extends State <HoteManager> {
                 ],
               ),
             ),
-            Container(
+            Expanded(
               child: Row(
                 children: <Widget>[
-                  RaisedButton(
-                    child: Text("油烟浓度"),
-                    onPressed: (){
-                      setState(() {
-                        currentValue ++;
-                        print("----");
-                        print(currentValue);
-                      });
-                    },
+                  Expanded(
+                    child: SmallLineChart(),
                   ),
-                  RaisedButton(
-                    child: Text("颗粒物"),
-                    onPressed: (){
-                      setState(() {
-                        currentValue --;
-                        print("----");
-                        print(currentValue);
-                      });
-
-                    },
+                  Expanded(
+                    child: SmallLineChart(),
                   )
                 ],
               ),
