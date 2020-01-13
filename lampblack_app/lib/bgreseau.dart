@@ -21,7 +21,6 @@ class Reseau {
         }
       }
     }
-    print(array);
     return array;
   }
 
