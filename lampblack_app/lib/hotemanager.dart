@@ -17,6 +17,20 @@ class _HoteManager extends State <HoteManager> {
   double value;
   List<Offset> points = [];
   List<Offset> points1 = [];
+  // X 轴的起始固定偏移
+  double offsetx = 44;
+  // X 轴的总长度
+  double axisxAllLength = 440;
+  // 每分钟的长度
+  double minuteLength = 440 * 1.0 / 1440;
+  // Y 的顶部偏移
+  double offsetTop = 20;
+  // Y 轴的总长度
+  double axisyAllLength = 208;
+  // Y 轴刻度值
+  double smally = 20 *1.0 / 208;
+  double bigally = 100 *1.0/208;
+
   @override
   Widget build(BuildContext context) {
     timerMethod();
@@ -75,18 +89,21 @@ class _HoteManager extends State <HoteManager> {
   // 定时器
   void timerMethod() {
     Timer(Duration(minutes: 1), (){
-      time += 3;
+      time += 1;
       if(time > 160) {
         time = 0;
         points1 = [];
         points = [];
       } else {
-        double val = getRandom(100);
-        points.add(Offset(time, val));
-        double val1 = getRandom(20);
-        points1.add(Offset(time, val1));
+        double val = getRandom(120);
+        var offys = val * smally;
+        points.add(Offset(time * minuteLength + offsetx  + 10, axisyAllLength - offys));
+        double val1 = getRandom(120);
+        var offyb = val1 * smally;
+        points1.add(Offset(time * minuteLength + offsetx + 10, axisyAllLength - offyb));
       }
       
+      print(points);
       setState(() {
         double val = getRandom(100);
         currentValue = val.toInt().toDouble();
