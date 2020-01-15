@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:lampblack_app/hotemanager.dart';
 
 void main(){
-  debugPaintSizeEnabled = true;
+  debugPaintSizeEnabled = false;
   return runApp(LampBlackApp());
 }
 

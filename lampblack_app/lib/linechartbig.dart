@@ -10,7 +10,7 @@ class BigLineChart extends StatelessWidget {
     // 初始配置
   List marks = ["10","20","30","40","50","60","70","80","90","100"];
   void initConfig (){
-    Size size = Size(512, 240);
+    Size size = Size(512, 270);
     _bgReseau = Reseau(marks, size).drawBgReseau();
   }
 
@@ -28,18 +28,18 @@ class BigLineChart extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   CustomPaint(
-                    size: Size(150, 60),
+                    size: Size(150, 30),
                     painter: LineChartTopItemView("温度", Colors.red),
                   ),
                   CustomPaint(
-                    size: Size(140, 60),
+                    size: Size(140, 30),
                     painter: LineChartTopItemView("湿度", Colors.blue),
                   )
                 ],
               ),
             ),
             CustomPaint(
-              size: Size(512, 240),
+              size: Size(512, 270),
               painter: LineChart(_bgReseau),
             )
           ],

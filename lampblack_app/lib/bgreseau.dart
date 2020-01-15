@@ -30,23 +30,32 @@ class Reseau {
     var markArray = marks.reversed.toList();
     var listArray = getXAsix();
     double lineWidth = 1;
-    double offsetLeft = 60;
-    double offsetRight = 15;
+    double offsetLeft = 40;
+    double offsetRight = 30;
     double offsetTop = 20;
     double offsetBot = 40;
     double spacingX = (size.width - offsetLeft - offsetRight - listArray.length * lineWidth)/(listArray.length - 1);
     double spacingY = (size.height - offsetBot - offsetTop - marks.length * lineWidth)/marks.length;
     Canvas canvas = Canvas(_recorder);
     var paint = Paint()
-      ..color = Colors.black38
+      ..color = Colors.black12
       ..strokeWidth = lineWidth
       ..style = PaintingStyle.stroke;
     
+    canvas.save();
     for(int i=0; i<listArray.length; i++){
       var asixY = offsetTop;
-      if (i ==0) asixY = 10;
+      var aixsW = lineWidth;
+      if (i ==0) {
+        asixY = 10;
+        aixsW = 4;
+        paint.color = Colors.black87;
+      } else {
+        paint.color = Colors.black12;
+      }
+      paint.strokeWidth = aixsW;
       var p1 = Offset(offsetLeft + i *(lineWidth + spacingX), asixY);
-      var p2 = Offset(offsetLeft + i *(lineWidth + spacingX) ,size.height - offsetBot);
+      var p2 = Offset(offsetLeft + i *(lineWidth + spacingX) ,size.height - offsetBot + lineWidth * 2);
       canvas.drawLine(p1, p2, paint);
 
       // 绘制文字
@@ -71,10 +80,18 @@ class Reseau {
       textPainter.paint(canvas, Offset.zero);
       canvas.restore();
     }
+    canvas.restore();
 
+    canvas.save();
     for(int i = 0; i <= marks.length ; i ++) {
       var p1 = Offset(offsetLeft , offsetTop + i *(spacingY + lineWidth));
-      var p2 = Offset(size.width - offsetRight, offsetTop + i *(spacingY + lineWidth));
+      var offsetr =  size.width - offsetRight;
+      if (i == marks.length) {
+        paint.strokeWidth = 4;
+        paint.color = Colors.black87;
+        offsetr += 15;
+      }
+      var p2 = Offset(offsetr, offsetTop + i *(spacingY + lineWidth));
       canvas.drawLine(p1, p2, paint);
       if(i != 0) {
         // 绘制横向刻度
@@ -96,6 +113,7 @@ class Reseau {
         canvas.restore();
       }
     }
+    canvas.restore();
     return _recorder.endRecording();
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lampblack_app/dialdraw.dart';
 import 'package:lampblack_app/linechartbig.dart';
 import 'package:lampblack_app/linechartsmall.dart';
+import 'package:lampblack_app/timeplate.dart';
 
 class HoteManager extends StatefulWidget {
   _HoteManager createState() => _HoteManager();
@@ -22,7 +23,13 @@ class _HoteManager extends State <HoteManager> {
     return Scaffold(
       appBar: AppBar(
         title: Text("实时数据监控"),
-        //backgroundColor: Color(0xFF141524),
+        centerTitle: true,
+        actions: <Widget>[
+          TimePlate(),
+          Container(
+            width: 40,
+          )
+        ],
       ),
       body: Center(
         child: Column(
@@ -67,7 +74,7 @@ class _HoteManager extends State <HoteManager> {
 
   // 定时器
   void timerMethod() {
-    Timer(Duration(seconds: 1), (){
+    Timer(Duration(minutes: 1), (){
       time += 3;
       if(time > 160) {
         time = 0;
