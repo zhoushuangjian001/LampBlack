@@ -29,8 +29,6 @@ class DrawAxisMark extends CustomPainter {
     double setBottom = 40;
     // Y轴每次偏移
     double everyOffsetAxisY = (size.height - setTop - setBottom) * 1.0/(marks.length - 1);
-    print(size.height - setTop - setBottom);
-    print(everyOffsetAxisY);
     canvas.save();
     Paint paint = Paint()
       ..color = Colors.black

@@ -8,18 +8,32 @@ import 'package:lampblack_app/scrollreseau.dart';
 class SmallLineChart extends StatelessWidget {
   final List<Offset> beadPoints;
   final List<Offset> lampPoints;
-  SmallLineChart(this.beadPoints, this.lampPoints);
+  final double jumpValue;
+  SmallLineChart(this.beadPoints, this.lampPoints, this.jumpValue);
   double k = 0;
   Picture _bgReseau;
     // 初始配置
   List<String> marks = ["0","2","4","6","8","10","12","14","16","18","20"];
   void initConfig (){
-    Size size = Size(2640, 270);
+    Size size = Size(10000, 270);
     _bgReseau = ScrollReseau(marks.length, size).getBgView();
   }
+  // ScrollController
+  ScrollController _scrollC1 = ScrollController();
 
+  void finshUi(){
+    WidgetsBinding.instance.addPostFrameCallback((value){
+      print("渲染完毕");
+      _scrollC1.jumpTo(jumpValue);
+    });
+  }
   @override
   Widget build(BuildContext context) {
+    _scrollC1.addListener((){
+      print("-------");
+      print(_scrollC1.offset);
+    });
+    finshUi();
     initConfig();
     return Center(
       child: Container(
@@ -50,11 +64,12 @@ class SmallLineChart extends StatelessWidget {
                   Container(
                     width: 440,
                     child: SingleChildScrollView(
+                      controller: _scrollC1,
                       scrollDirection: Axis.horizontal,
                       child: Container(
-                        width: 2640,
+                        width: 10000,
                         child: CustomPaint(
-                          size: Size(2640, 270),
+                          size: Size(10000, 270),
                           painter: LineChart(_bgReseau,beadPoints,lampPoints),
                         ),
                       )

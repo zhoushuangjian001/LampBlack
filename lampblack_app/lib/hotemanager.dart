@@ -15,21 +15,22 @@ class _HoteManager extends State <HoteManager> {
   double currentValue = 0 ; 
   double time = 0;
   double value;
+  double jumpValue = 0;
   List<Offset> points = [];
   List<Offset> points1 = [];
   // X 轴的起始固定偏移
-  double offsetx = 44;
+  double offsetx = 0;
   // X 轴的总长度
-  double axisxAllLength = 440;
+  double axisxAllLength = 10000 - 10000 *1.0/24;
   // 每分钟的长度
-  double minuteLength = 440 * 1.0 / 1440;
+  double minuteLength = (10000 - 10000 *1.0/24) / 1440;
   // Y 的顶部偏移
   double offsetTop = 20;
   // Y 轴的总长度
-  double axisyAllLength = 208;
+  double axisyAllLength = 230;
   // Y 轴刻度值
-  double smally = 20 *1.0 / 208;
-  double bigally = 100 *1.0/208;
+  double smally =  210 * 1.0/20;
+  double bigally = 210 *1.0 / 100;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +66,7 @@ class _HoteManager extends State <HoteManager> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                    child: SmallLineChart(points,points1),
+                    child: SmallLineChart(points,points1, jumpValue),
                   ),
                   Expanded(
                     child: BigLineChart(),
@@ -88,27 +89,31 @@ class _HoteManager extends State <HoteManager> {
 
   // 定时器
   void timerMethod() {
-    Timer(Duration(minutes: 1), (){
+    Timer(Duration(seconds: 1), (){
+      if(time % 60 == 0 && time != 0) {
+        jumpValue = minuteLength * time;
+      }
       time += 1;
-      if(time > 160) {
+      if(time > 10000) {
         time = 0;
         points1 = [];
         points = [];
       } else {
-        double val = getRandom(120);
+        double val = getRandom(20);
         var offys = val * smally;
-        points.add(Offset(time * minuteLength + offsetx  + 10, axisyAllLength - offys));
-        double val1 = getRandom(120);
+        print(val);
+        points.add(Offset(time * minuteLength + offsetx , axisyAllLength - offys));
+        double val1 = getRandom(20);
         var offyb = val1 * smally;
-        points1.add(Offset(time * minuteLength + offsetx + 10, axisyAllLength - offyb));
+        points1.add(Offset(time * minuteLength + offsetx, axisyAllLength - offyb));
       }
       
-      print(points);
       setState(() {
         double val = getRandom(100);
         currentValue = val.toInt().toDouble();
         points = points;
         points1= points1;
+        jumpValue = jumpValue;
       });
     });
   }
