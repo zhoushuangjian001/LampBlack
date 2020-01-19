@@ -101,7 +101,6 @@ class _HoteManager extends State <HoteManager> {
       } else {
         double val = getRandom(20);
         var offys = val * smally;
-        print(val);
         points.add(Offset(time * minuteLength + offsetx , axisyAllLength - offys));
         double val1 = getRandom(20);
         var offyb = val1 * smally;

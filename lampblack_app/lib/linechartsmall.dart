@@ -23,16 +23,11 @@ class SmallLineChart extends StatelessWidget {
 
   void finshUi(){
     WidgetsBinding.instance.addPostFrameCallback((value){
-      print("渲染完毕");
       _scrollC1.jumpTo(jumpValue);
     });
   }
   @override
   Widget build(BuildContext context) {
-    _scrollC1.addListener((){
-      print("-------");
-      print(_scrollC1.offset);
-    });
     finshUi();
     initConfig();
     return Center(
@@ -64,6 +59,7 @@ class SmallLineChart extends StatelessWidget {
                   Container(
                     width: 440,
                     child: SingleChildScrollView(
+                      physics: NeverScrollableScrollPhysics(),
                       controller: _scrollC1,
                       scrollDirection: Axis.horizontal,
                       child: Container(
