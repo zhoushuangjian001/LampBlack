@@ -1,17 +1,19 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:lampblack_app/bgreseau.dart';
+import 'package:lampblack_app/scrollreseau.dart';
+
+import 'axisymark.dart';
 
 // ignore: must_be_immutable
 class BigLineChart extends StatelessWidget {
 
   Picture _bgReseau;
     // 初始配置
-  List marks = ["10","20","30","40","50","60","70","80","90","100"];
+  List<String> marks = ["10","20","30","40","50","60","70","80","90","100"];
   void initConfig (){
-    Size size = Size(512, 270);
-    _bgReseau = Reseau(marks, size).drawBgReseau();
+    Size size = Size(2640, 270);
+    _bgReseau = ScrollReseau(marks.length, size).getBgView();
   }
 
   @override
@@ -38,9 +40,26 @@ class BigLineChart extends StatelessWidget {
                 ],
               ),
             ),
-            CustomPaint(
-              size: Size(512, 270),
-              painter: LineChart(_bgReseau),
+            Container(
+              height: 270,
+              child: Row(
+                children: <Widget>[
+                  AxisYMark(marks.reversed.toList(),Size(40,270)),
+                  Container(
+                    width: 440,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Container(
+                        width: 2640,
+                        child: CustomPaint(
+                          size: Size(2640, 270),
+                          painter: LineChart(_bgReseau),
+                        ),
+                      )
+                    ),
+                  )
+                ],
+              ),
             )
           ],
         ),

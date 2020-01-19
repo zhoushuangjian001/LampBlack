@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:lampblack_app/bgreseau.dart';
+import 'package:lampblack_app/axisymark.dart';
+import 'package:lampblack_app/scrollreseau.dart';
 
 // ignore: must_be_immutable
 class SmallLineChart extends StatelessWidget {
@@ -11,10 +12,10 @@ class SmallLineChart extends StatelessWidget {
   double k = 0;
   Picture _bgReseau;
     // 初始配置
-  List marks = ["2","4","6","8","10","12","14","16","18","20"];
+  List<String> marks = ["0","2","4","6","8","10","12","14","16","18","20"];
   void initConfig (){
-    Size size = Size(512, 270);
-    _bgReseau = Reseau(marks, size).drawBgReseau();
+    Size size = Size(2640, 270);
+    _bgReseau = ScrollReseau(marks.length, size).getBgView();
   }
 
   @override
@@ -41,9 +42,26 @@ class SmallLineChart extends StatelessWidget {
                 ],
               ),
             ),
-            CustomPaint(
-              size: Size(512, 270),
-              painter: LineChart(_bgReseau,beadPoints,lampPoints),
+            Container(
+              height: 270,
+              child: Row(
+                children: <Widget>[
+                  AxisYMark(marks.reversed.toList(),Size(40,270)),
+                  Container(
+                    width: 440,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Container(
+                        width: 2640,
+                        child: CustomPaint(
+                          size: Size(2640, 270),
+                          painter: LineChart(_bgReseau,beadPoints,lampPoints),
+                        ),
+                      )
+                    ),
+                  )
+                ],
+              ),
             )
           ],
         ),
