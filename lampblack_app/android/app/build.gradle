@@ -29,7 +29,10 @@ android {
     compileSdkVersion 28
 
     sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        main{
+            jniLibs.srcDirs = ['libs']
+            java.srcDirs += 'src/main/kotlin'
+        }
     }
 
     lintOptions {
