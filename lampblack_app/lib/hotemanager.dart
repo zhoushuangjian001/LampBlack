@@ -94,8 +94,9 @@ class _HoteManager extends State <HoteManager> {
         jumpValue = minuteLength * time;
       }
       time += 1;
-      if(time > 10000) {
+      if(time > 160) {
         time = 0;
+        jumpValue = 0;
         points1 = [];
         points = [];
       } else {
