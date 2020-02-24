@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lampblack_app/dialdraw.dart';
 import 'package:lampblack_app/linechartbig.dart';
 import 'package:lampblack_app/linechartsmall.dart';
@@ -32,9 +34,13 @@ class _HoteManager extends State <HoteManager> {
   double smally =  210 * 1.0/20;
   double bigally = 210 *1.0 / 100;
 
+  // 串口调用对象
+  static const platform = const MethodChannel('samples.flutter.dev/battery');
+
   @override
   Widget build(BuildContext context) {
     timerMethod();
+    getSerialData();
     return Scaffold(
       appBar: AppBar(
         title: Text("实时数据监控"),
@@ -80,6 +86,15 @@ class _HoteManager extends State <HoteManager> {
     );
   }
 
+  /// 获取串口数据
+  Future  getSerialData() async {
+    try {
+      var list = await platform.invokeMethod('getSumOfNumber');
+      print(list);
+    } catch(err){
+      print("获取失败");
+    }
+  }
 
   // 随机数
   double getRandom(int scal){

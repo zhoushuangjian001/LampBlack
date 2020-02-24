@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:lampblack_app/hotemanager.dart';
+import 'package:lampblack_app/operationroute.dart';
 
 void main(){
   debugPaintSizeEnabled = false;
@@ -15,7 +16,8 @@ class LampBlackApp extends StatelessWidget {
         body: LoginRoute(),
       ),
       routes: {
-        "hote":(context) => HoteManager()
+        "hote":(context) => HoteManager(),
+        "operation":(context) => Operationroute()
       },
     );
   }
@@ -64,9 +66,7 @@ class LoginRoute extends StatelessWidget {
                         Navigator.pushNamed(context, "hote");
                       }
                     ),
-                    SizedBox(
-
-                    ),
+                    SizedBox(),
                     ItemButton(
                       title: "运维",
                       icon: Icon(
@@ -74,7 +74,7 @@ class LoginRoute extends StatelessWidget {
                         size: 60,
                       ),
                       methodBlock: (){
-
+                        Navigator.pushNamed(context, "operation");
                       },
                     )
                   ],
@@ -88,6 +88,7 @@ class LoginRoute extends StatelessWidget {
   }
 }
 
+/// 按钮自定义
 class ItemButton extends StatelessWidget {
   ItemButton({Key key, this.title, this.icon, this.methodBlock})
       : super(key: key);
