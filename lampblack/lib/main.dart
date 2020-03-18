@@ -30,7 +30,7 @@ class LoginRoute extends StatelessWidget {
       children: <Widget>[
         ConstrainedBox(
             child: Image.asset(
-              "login_bg.jpg",
+              "images/login_bg.jpg",
               fit: BoxFit.cover,
             ),
             constraints: BoxConstraints.expand()),
