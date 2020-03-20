@@ -37,7 +37,7 @@ class _Operationroute extends State<Operationroute> {
           children: <Widget>[
             Container(
               width: 300,
-              color: Colors.black12,
+              color: Colors.black45,
               child: ListView.builder(
                 itemBuilder: (BuildContext context, int index) {
                   var key = "key_$index";
@@ -121,30 +121,220 @@ Widget buildAlert() {
 // 设备状态
 Widget buildDeviceStateWidget() {
   return Container(
-    child: Container(
-      margin: EdgeInsets.only(left: 20),
-      child: Column(
-        children: <Widget>[
-          Row(
+    child: Column(
+      children: <Widget>[
+        Container(
+          height: 180,
+          color: Colors.green,
+          child: Row(
             children: <Widget>[
-              Text(
-                "设备名称:",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 15),
+                            child: Text(
+                              "设备名称:",
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10, right: 10),
+                            child: Text(
+                              "Lamp_00000",
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 15),
+                            child: Text(
+                              "设备     ID:",
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10, right: 10),
+                            child: Text(
+                              "00001111",
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 15),
+                            child: Text(
+                              "设备标签:",
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10, right: 10),
+                            child: Text(
+                              "信阳、烤肉店",
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Text("Lamp_00001"),
-              SizedBox(
-                width: 20,
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 15),
+                            child: Text(
+                              "设备状态:",
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10, right: 10),
+                            child: Text(
+                              "在线",
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 15),
+                            child: Text(
+                              "创建时间:",
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10, right: 10),
+                            child: Text(
+                              "2020-3-20",
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(left: 15),
+                            child: Text(
+                              "设备描述:",
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10, right: 10),
+                            child: Text(
+                              "信阳、烤肉店",
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              Text("设备状态:"),
-              Icon(Icons.queue),
-              Text("掉线"),
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            color: Colors.pink,
+          ),
+        ),
+        Container(
+          height: 80,
+          color: Colors.red,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: Text(
+                    "© NetWork小贱和曹小强所有",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                color: Colors.white,
+                height: 20,
+                width: 1,
+              ),
+              Container(
+                width: 200,
+                child: Text(
+                  "删除设备",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     ),
   );
 }
