@@ -29,11 +29,12 @@ class LoginRoute extends StatelessWidget {
     return Stack(
       children: <Widget>[
         ConstrainedBox(
-            child: Image.asset(
-              "images/login_bg.jpg",
-              fit: BoxFit.cover,
-            ),
-            constraints: BoxConstraints.expand()),
+          child: Image.asset(
+            "images/login_bg.jpg",
+            fit: BoxFit.cover,
+          ),
+          constraints: BoxConstraints.expand(),
+        ),
         Align(
             alignment: Alignment.center,
             child: Column(
