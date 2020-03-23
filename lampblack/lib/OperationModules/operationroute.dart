@@ -6,9 +6,19 @@ class Operationroute extends StatefulWidget {
 }
 
 class _Operationroute extends State<Operationroute> {
+  static const List<String> _list = ["设备状态栏", "设备新增和更新", "其他"];
+  Map stateMap = Map();
+  Widget _widget;
+  int _curIndex;
+
   @override
   void initState() {
     super.initState();
+    for (int i = 0; i < _list.length; i++) {
+      var _key = "key_$i";
+      stateMap[_key] = false;
+    }
+    _buildSelecdWidget(0);
   }
 
   @override
@@ -21,11 +31,12 @@ class _Operationroute extends State<Operationroute> {
             fontSize: 30,
           ),
         ),
+        elevation: 0,
         backgroundColor: Colors.blue,
         actions: <Widget>[
           GestureDetector(
             child: Container(
-              margin: EdgeInsets.only(right: 30),
+              margin: EdgeInsets.only(right: 30, top: 15),
               child: Text(
                 "删除设备",
                 style: TextStyle(
@@ -43,70 +54,65 @@ class _Operationroute extends State<Operationroute> {
             Container(
               width: 300,
               color: Colors.transparent,
-              child: ConstrainedBox(
-                child: Image.asset(
-                  "images/op_side_bg.jpg",
-                  fit: BoxFit.cover,
-                ),
-                constraints: BoxConstraints.expand(),
+              child: ListView.builder(
+                itemBuilder: (BuildContext context, int index) {
+                  var _title = _list[index];
+                  var _key = "key_$index";
+                  var _isState = stateMap[_key];
+                  return Column(
+                    children: <Widget>[
+                      Divider(
+                        height: 0.5,
+                        color: Colors.black12,
+                      ),
+                      GestureDetector(
+                        child: Container(
+                          height: 60,
+                          child: Align(
+                            child: Text(
+                              _title,
+                              style: TextStyle(
+                                fontSize: 22,
+                                color: Colors.white,
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                          ),
+                          color:
+                              _isState == true ? Colors.blue : Colors.black38,
+                        ),
+                        onTap: () => _buildSelecdWidget(index),
+                      ),
+                    ],
+                  );
+                },
+                itemCount: _list.length,
               ),
             ),
             Expanded(
-              child: buildView(),
+              child: _widget,
             )
           ],
         ),
       ),
     );
   }
-}
 
-// 权限弹窗
-Widget buildAlert() {
-  return Container(
-    color: Colors.red,
-  );
-}
+  // 选择那个模块
+  void _buildSelecdWidget(int index) {
+    var key = "key_$_curIndex";
+    stateMap[key] = false;
+    var _key = "key_$index";
+    stateMap[_key] = true;
+    _curIndex = index;
 
-// 整个布局
-Widget buildView() {
-  return Container(
-    child: ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
-        return indexBuild(index);
-      },
-      itemCount: 2,
-    ),
-  );
-}
-
-Widget indexBuild(int index) {
-  Widget _widget;
-  if (index == 0) {
-    _widget = Container(
-      height: 220,
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 60,
-            color: Colors.black26,
-            padding: EdgeInsets.only(left: 15),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '设备状态栏',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Row(
+    Widget widget;
+    if (index == 0) {
+      widget = Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Row(
               children: <Widget>[
                 Expanded(
                   child: Container(
@@ -114,6 +120,9 @@ Widget indexBuild(int index) {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
+                        SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           children: <Widget>[
                             Container(
@@ -121,7 +130,7 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "设备名称:",
                                 style: TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   color: Colors.black,
                                 ),
                               ),
@@ -131,12 +140,15 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "Lamp_00000",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   color: Colors.black45,
                                 ),
                               ),
                             ),
                           ],
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         Row(
                           children: <Widget>[
@@ -145,7 +157,7 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "设备     ID:",
                                 style: TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   color: Colors.black,
                                 ),
                               ),
@@ -155,12 +167,15 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "00001111",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   color: Colors.black45,
                                 ),
                               ),
                             ),
                           ],
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         Row(
                           children: <Widget>[
@@ -169,7 +184,7 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "设备标签:",
                                 style: TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   color: Colors.black,
                                 ),
                               ),
@@ -179,7 +194,7 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "信阳、烤肉店",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   color: Colors.black45,
                                 ),
                               ),
@@ -196,6 +211,9 @@ Widget indexBuild(int index) {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
+                        SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           children: <Widget>[
                             Container(
@@ -203,7 +221,7 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "设备状态:",
                                 style: TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   color: Colors.black,
                                 ),
                               ),
@@ -213,12 +231,15 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "在线",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   color: Colors.black45,
                                 ),
                               ),
                             ),
                           ],
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         Row(
                           children: <Widget>[
@@ -227,7 +248,7 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "创建时间:",
                                 style: TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   color: Colors.black,
                                 ),
                               ),
@@ -237,12 +258,15 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "2020-3-20",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   color: Colors.black45,
                                 ),
                               ),
                             ),
                           ],
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         Row(
                           children: <Widget>[
@@ -251,7 +275,7 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "设备描述:",
                                 style: TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   color: Colors.black,
                                 ),
                               ),
@@ -261,7 +285,7 @@ Widget indexBuild(int index) {
                               child: Text(
                                 "信阳、烤肉店",
                                 style: TextStyle(
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   color: Colors.black45,
                                 ),
                               ),
@@ -274,274 +298,275 @@ Widget indexBuild(int index) {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  } else {
-    var _nameVc = TextEditingController();
-    var _describeVc = TextEditingController();
-    var _markVc = TextEditingController();
-    var _authVc = TextEditingController();
-    var _otherVc = TextEditingController();
-    var _formKey = GlobalKey<FormState>();
-    _widget = Container(
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 60,
-            color: Colors.black26,
-            padding: EdgeInsets.only(left: 15),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '设备新增和更新',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-          Container(
-            height: 250,
-            child: Form(
-              key: _formKey,
-              child: Container(
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.zero,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.only(left: 15),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "设备名称",
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15, right: 15),
-                                    child: TextFormField(
-                                      controller: _nameVc,
-                                      decoration: InputDecoration(
-                                        hintText: "请输入设备名称",
-                                      ),
-                                      validator: (value) {
-                                        if (value.length == 0) return "不能为空";
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.zero,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.only(left: 15),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "设备描述",
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15, right: 15),
-                                    child: TextFormField(
-                                      controller: _describeVc,
-                                      decoration: InputDecoration(
-                                        hintText: "请输入设备描述",
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.zero,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.only(left: 15),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "设备标签",
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15, right: 15),
-                                    child: TextFormField(
-                                      controller: _markVc,
-                                      decoration: InputDecoration(
-                                        hintText: "请输入设备标签",
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.zero,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.only(left: 15),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "设备鉴权信息",
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15, right: 15),
-                                    child: TextFormField(
-                                      controller: _authVc,
-                                      decoration: InputDecoration(
-                                        hintText: "请输入设备鉴权信息",
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.zero,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.only(left: 15),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "设备其他信息",
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15, right: 15),
-                                    child: TextFormField(
-                                      controller: _otherVc,
-                                      decoration: InputDecoration(
-                                        hintText: "请输入设备其他信息",
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Container(
-            color: Colors.lightBlue,
-            height: 60,
-            child: Row(
+          ],
+        ),
+      );
+    } else if (index == 1) {
+      var _nameVc = TextEditingController();
+      var _describeVc = TextEditingController();
+      var _markVc = TextEditingController();
+      var _authVc = TextEditingController();
+      var _otherVc = TextEditingController();
+      var _formKey = GlobalKey<FormState>();
+      widget = ListView.builder(
+        itemBuilder: (context, index) {
+          return Container(
+            child: Column(
               children: <Widget>[
-                Expanded(
-                  child: GestureDetector(
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Text(
-                        "新增设备",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: 250,
+                  child: Scaffold(
+                    body: Form(
+                      key: _formKey,
+                      child: Container(
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                color: Colors.transparent,
+                                child: Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.zero,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.only(left: 15),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "设备名称",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 25,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: TextFormField(
+                                              controller: _nameVc,
+                                              decoration: InputDecoration(
+                                                hintText: "请输入设备名称",
+                                              ),
+                                              validator: (value) {
+                                                if (value.length == 0)
+                                                  return "不能为空";
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.zero,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.only(left: 15),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "设备描述",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 25,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: TextFormField(
+                                              controller: _describeVc,
+                                              decoration: InputDecoration(
+                                                hintText: "请入设备描述",
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.zero,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.only(left: 15),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "设备标签",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 25,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: TextFormField(
+                                              controller: _markVc,
+                                              decoration: InputDecoration(
+                                                hintText: "请入设备标签",
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                color: Colors.transparent,
+                                child: Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.zero,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.only(left: 15),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "设备鉴权信息",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 25,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: TextFormField(
+                                              controller: _authVc,
+                                              decoration: InputDecoration(
+                                                hintText: "请输入设备鉴权信息",
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.zero,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.only(left: 15),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "设备其他信息",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 25,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: TextFormField(
+                                              controller: _otherVc,
+                                              decoration: InputDecoration(
+                                                hintText: "请输入设备其他信息",
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    onTap: () {},
                   ),
                 ),
                 Container(
-                  width: 1,
-                  height: 30,
-                  color: Colors.white,
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Text(
-                        "更新设备",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
+                  color: Colors.lightBlue,
+                  height: 60,
+                  margin: EdgeInsets.only(left: 15, right: 15),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: GestureDetector(
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Text(
+                              "新增设备",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          onTap: () {},
                         ),
                       ),
-                    ),
-                    onTap: () {},
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: Colors.white,
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Text(
+                              "更新设备",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          onTap: () {},
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        },
+        itemCount: 1,
+      );
+    } else {
+      widget = Container(
+        color: Colors.pink,
+      );
+    }
+    setState(() {
+      _widget = widget;
+    });
   }
-  return _widget;
 }
