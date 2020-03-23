@@ -15,8 +15,27 @@ class _Operationroute extends State<Operationroute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("运维"),
+        title: Text(
+          "运维",
+          style: TextStyle(
+            fontSize: 30,
+          ),
+        ),
         backgroundColor: Colors.blue,
+        actions: <Widget>[
+          GestureDetector(
+            child: Container(
+              margin: EdgeInsets.only(right: 30),
+              child: Text(
+                "删除设备",
+                style: TextStyle(
+                  fontSize: 25,
+                ),
+              ),
+            ),
+            onTap: () {},
+          ),
+        ],
       ),
       body: Container(
         child: Row(
