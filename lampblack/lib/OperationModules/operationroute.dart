@@ -1,5 +1,8 @@
+import 'package:dio/dio.dart';
+
 /// 运维界面
 import 'package:flutter/material.dart';
+import 'package:lampblack/IDKit/IDKitAlert.dart';
 
 class Operationroute extends StatefulWidget {
   _Operationroute createState() => _Operationroute();
@@ -44,7 +47,19 @@ class _Operationroute extends State<Operationroute> {
                 ),
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              IDKitAlert.alert(
+                context,
+                title: "温馨提示",
+                content: "您确定要删除设备吗，删除后设备在云上信息将全部清除！",
+                actions: ["确定", "取消"],
+                clickMethod: (index) {
+                  if (index == 1) {
+                    IDKitAlert.removeAlert();
+                  }
+                },
+              );
+            },
           ),
         ],
       ),
@@ -155,7 +170,7 @@ class _Operationroute extends State<Operationroute> {
                             Container(
                               margin: EdgeInsets.only(left: 15),
                               child: Text(
-                                "设备     ID:",
+                                "设备    ID:",
                                 style: TextStyle(
                                   fontSize: 25,
                                   color: Colors.black,
@@ -317,7 +332,7 @@ class _Operationroute extends State<Operationroute> {
                   height: 10,
                 ),
                 Container(
-                  height: 250,
+                  height: 280,
                   child: Scaffold(
                     body: Form(
                       key: _formKey,
@@ -527,7 +542,28 @@ class _Operationroute extends State<Operationroute> {
                               ),
                             ),
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            if (_formKey.currentState.validate()) {
+                              Map _param = Map<String, dynamic>();
+                              _param["title"] = _nameVc.value;
+                              _param["desc"] = _describeVc.value;
+                              _param["tags"] = _markVc.value;
+                              _param["auth_info"] = _authVc.value;
+                              _param["other"] = _otherVc.value;
+
+                              BaseOptions options = BaseOptions(
+                                baseUrl: "http://api.heclouds.com",
+                                connectTimeout: 5000,
+                                receiveTimeout: 3000,
+                              );
+                              Dio _dio = Dio(options);
+                              _dio
+                                  .post("/devices", queryParameters: _param)
+                                  .then((value) {
+                                print(value);
+                              });
+                            }
+                          },
                         ),
                       ),
                       Container(
