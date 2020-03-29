@@ -1,26 +1,58 @@
-import 'package:dio/dio.dart';
-
 /// 运维界面
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:idkitflutter/IDKit/IDKitToast.dart';
 import 'package:lampblack/IDKit/IDKitAlert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Operationroute extends StatefulWidget {
   _Operationroute createState() => _Operationroute();
 }
 
 class _Operationroute extends State<Operationroute> {
+  static const String apikey = "B=zpzEVugV0VJ5nbbnw3aGba124=";
+  static const String deviceIdKey = "com.lamp_device_id_key";
+  // 设备信息默认设置
   static const List<String> _list = ["设备状态栏", "设备新增和更新", "其他"];
   Map stateMap = Map();
   Widget _widget;
   int _curIndex;
+  String _devideName;
+  String _devideId;
+  String _devideMark;
+  String _devideTime;
+  String _devideDesc;
+  bool _devideState;
+  // 缓存对象
+  SharedPreferences _pref;
+  // 设置默认值
+  void _setDefaultValue() {
+    _devideName = "--------";
+    _devideName = "--------";
+    _devideMark = "--------";
+    _devideTime = "--------";
+    _devideDesc = "--------";
+    _devideId = "--------";
+    _devideState = false;
+  }
+
+  // 获取缓存对象
+  void _getSharePref() async {
+    _pref = await SharedPreferences.getInstance();
+  }
 
   @override
   void initState() {
     super.initState();
+    // 初始获取存储对象
+    _getSharePref();
     for (int i = 0; i < _list.length; i++) {
       var _key = "key_$i";
       stateMap[_key] = false;
     }
+    // 设置初始值
+    _setDefaultValue();
     _buildSelecdWidget(0);
   }
 
@@ -53,9 +85,11 @@ class _Operationroute extends State<Operationroute> {
                 title: "温馨提示",
                 content: "您确定要删除设备吗，删除后设备在云上信息将全部清除！",
                 actions: ["确定", "取消"],
-                clickMethod: (index) {
+                clickMethod: (index) async {
                   if (index == 1) {
                     IDKitAlert.removeAlert();
+                  } else {
+                    _delDevide();
                   }
                 },
               );
@@ -113,6 +147,60 @@ class _Operationroute extends State<Operationroute> {
     );
   }
 
+  // 删除设备
+  void _delDevide() {
+    if (_pref != null) {
+      var _did = _pref.getString(deviceIdKey);
+      if (_did != null && _did.length != 0) {
+        IDKitToast.showLoading(context);
+        BaseOptions _baseOptions = BaseOptions();
+        _baseOptions.connectTimeout = 2000;
+        _baseOptions.receiveTimeout = 2000;
+        _baseOptions.headers = {"api-key": apikey};
+        Dio _dio = Dio(_baseOptions);
+        _dio.delete("http://api.heclouds.com/devices/$_did").then((result) {
+          var res = result.data;
+          if (res["errno"] == 0 && res["error"] == "succ") {
+            IDKitToast.removeToast();
+            IDKitToast.showText(context, "设备删除成功！");
+            _setDefaultValue();
+            _pref.remove(deviceIdKey);
+            IDKitAlert.removeAlert();
+          } else {
+            IDKitToast.removeToast();
+            IDKitToast.showText(context, "设备删除失败！");
+            IDKitAlert.removeAlert();
+          }
+        }).catchError((err) {
+          IDKitToast.removeToast();
+        });
+      }
+    }
+  }
+
+  // 请求设备信息
+  void getDevideInfo() async {
+    if (_pref != null) {
+      var _did = _pref.getString(deviceIdKey);
+      if (_did != null && _did.length != 0) {
+        Dio _dio = Dio();
+        _dio.options.headers = {"api-key": apikey};
+        _dio.get("http://api.heclouds.com/devices/$_did").then((value) {
+          var errno = value.data["errno"];
+          var err = value.data["error"];
+          if (err == "succ" || errno == 0) {
+            _devideName = value.data["data"]["title"] ?? "--------";
+            _devideId = value.data["data"]["id"] ?? "--------";
+            _devideMark = (value.data["data"]["tags"]).toString() ?? "--------";
+            _devideTime = value.data["data"]["create_time"] ?? "--------";
+            _devideDesc = value.data["data"]["desc"] ?? "--------";
+            _devideState = value.data["data"]["online"] ?? false;
+          }
+        });
+      }
+    }
+  }
+
   // 选择那个模块
   void _buildSelecdWidget(int index) {
     var key = "key_$_curIndex";
@@ -123,6 +211,7 @@ class _Operationroute extends State<Operationroute> {
 
     Widget widget;
     if (index == 0) {
+      getDevideInfo();
       widget = Container(
         color: Colors.white,
         child: Column(
@@ -153,7 +242,7 @@ class _Operationroute extends State<Operationroute> {
                             Container(
                               margin: EdgeInsets.only(left: 10, right: 10),
                               child: Text(
-                                "Lamp_00000",
+                                _devideName ?? "",
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.black45,
@@ -180,7 +269,7 @@ class _Operationroute extends State<Operationroute> {
                             Container(
                               margin: EdgeInsets.only(left: 10, right: 10),
                               child: Text(
-                                "00001111",
+                                _devideId ?? "",
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.black45,
@@ -207,7 +296,7 @@ class _Operationroute extends State<Operationroute> {
                             Container(
                               margin: EdgeInsets.only(left: 10, right: 10),
                               child: Text(
-                                "信阳、烤肉店",
+                                _devideMark ?? "",
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.black45,
@@ -271,7 +360,7 @@ class _Operationroute extends State<Operationroute> {
                             Container(
                               margin: EdgeInsets.only(left: 10, right: 10),
                               child: Text(
-                                "2020-3-20",
+                                _devideTime ?? "",
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.black45,
@@ -298,7 +387,7 @@ class _Operationroute extends State<Operationroute> {
                             Container(
                               margin: EdgeInsets.only(left: 10, right: 10),
                               child: Text(
-                                "信阳、烤肉店",
+                                _devideDesc ?? "",
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.black45,
@@ -321,7 +410,6 @@ class _Operationroute extends State<Operationroute> {
       var _describeVc = TextEditingController();
       var _markVc = TextEditingController();
       var _authVc = TextEditingController();
-      var _otherVc = TextEditingController();
       var _formKey = GlobalKey<FormState>();
       widget = ListView.builder(
         itemBuilder: (context, index) {
@@ -332,7 +420,7 @@ class _Operationroute extends State<Operationroute> {
                   height: 10,
                 ),
                 Container(
-                  height: 280,
+                  height: 200,
                   child: Scaffold(
                     body: Form(
                       key: _formKey,
@@ -411,37 +499,6 @@ class _Operationroute extends State<Operationroute> {
                                         ],
                                       ),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.zero,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Container(
-                                            padding: EdgeInsets.only(left: 15),
-                                            child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                "设备标签",
-                                                textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  fontSize: 25,
-                                                  color: Colors.black87,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 15, right: 15),
-                                            child: TextFormField(
-                                              controller: _markVc,
-                                              decoration: InputDecoration(
-                                                hintText: "请入设备标签",
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -491,7 +548,7 @@ class _Operationroute extends State<Operationroute> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                "设备其他信息",
+                                                "设备标签",
                                                 textAlign: TextAlign.left,
                                                 style: TextStyle(
                                                   fontSize: 25,
@@ -504,9 +561,9 @@ class _Operationroute extends State<Operationroute> {
                                             padding: const EdgeInsets.only(
                                                 left: 15, right: 15),
                                             child: TextFormField(
-                                              controller: _otherVc,
+                                              controller: _markVc,
                                               decoration: InputDecoration(
-                                                hintText: "请输入设备其他信息",
+                                                hintText: "请入设备标签",
                                               ),
                                             ),
                                           ),
@@ -543,24 +600,41 @@ class _Operationroute extends State<Operationroute> {
                             ),
                           ),
                           onTap: () {
+                            var did = _pref.getString(deviceIdKey);
+                            if (did != null && did.length != 0) {
+                              IDKitToast.showText(context, "该设备已经被注册！");
+                              return;
+                            }
                             if (_formKey.currentState.validate()) {
+                              IDKitToast.showLoading(context);
+                              var tags = "${_markVc.value.text}";
                               Map _param = Map<String, dynamic>();
-                              _param["title"] = _nameVc.value;
-                              _param["desc"] = _describeVc.value;
-                              _param["tags"] = _markVc.value;
-                              _param["auth_info"] = _authVc.value;
-                              _param["other"] = _otherVc.value;
-
+                              _param["title"] = "${_nameVc.value.text}";
+                              _param["desc"] = "${_describeVc.value.text}";
+                              _param["tags"] = tags.split(",");
+                              if (_authVc.value.text.length != 0) {
+                                _param["auth_info"] = "${_authVc.value.text}";
+                              }
                               BaseOptions options = BaseOptions(
-                                baseUrl: "http://api.heclouds.com",
                                 connectTimeout: 5000,
                                 receiveTimeout: 3000,
+                                headers: {"api-key": apikey},
                               );
                               Dio _dio = Dio(options);
                               _dio
-                                  .post("/devices", queryParameters: _param)
-                                  .then((value) {
-                                print(value);
+                                  .post("http://api.heclouds.com/devices",
+                                      data: json.encode(_param))
+                                  .then((value) async {
+                                var errno = value.data["errno"];
+                                var err = value.data["error"];
+                                if (err == "succ" || errno == 0) {
+                                  IDKitToast.removeToast();
+                                  var id = value.data["data"]["device_id"];
+                                  _pref.setString(deviceIdKey, id);
+                                  IDKitToast.showText(context, "添加设备成功！");
+                                }
+                              }).catchError((err) {
+                                IDKitToast.removeToast();
                               });
                             }
                           },
@@ -584,7 +658,49 @@ class _Operationroute extends State<Operationroute> {
                               ),
                             ),
                           ),
-                          onTap: () {},
+                          onTap: () async {
+                            var did = _pref.getString(deviceIdKey);
+                            if (did != null && did.length != 0) {
+                              if (_formKey.currentState.validate()) {
+                                IDKitToast.showLoading(context);
+                                var tags = "${_markVc.value.text}";
+                                Map _param = Map<String, dynamic>();
+                                _param["title"] = "${_nameVc.value.text}";
+                                _param["desc"] = "${_describeVc.value.text}";
+                                _param["tags"] = tags.split(",");
+                                if (_authVc.value.text.length != 0) {
+                                  _param["auth_info"] = "${_authVc.value.text}";
+                                }
+                                BaseOptions options = BaseOptions(
+                                  connectTimeout: 5000,
+                                  receiveTimeout: 3000,
+                                  headers: {"api-key": apikey},
+                                  method: "PUT",
+                                );
+                                Dio _dio = Dio(options);
+                                _dio
+                                    .request(
+                                  "http://api.heclouds.com/devices/$did",
+                                  data: json.encode(_param),
+                                )
+                                    .then((value) {
+                                  var errno = value.data["errno"];
+                                  var err = value.data["error"];
+                                  if (err == "succ" || errno == 0) {
+                                    IDKitToast.removeToast();
+                                    IDKitToast.showText(context, "更新设备成功！");
+                                  } else {
+                                    IDKitToast.removeToast();
+                                    IDKitToast.showText(context, "更新设备失败！");
+                                  }
+                                }).catchError((err) {
+                                  IDKitToast.removeToast();
+                                });
+                              }
+                            } else {
+                              IDKitToast.showText(context, "请先注册设备！");
+                            }
+                          },
                         ),
                       ),
                     ],
