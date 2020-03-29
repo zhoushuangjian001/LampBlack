@@ -47,6 +47,8 @@ flutter:
   assets:
     - images/login_bg.jpg
     - images/op_side_bg.jpg
+    - images/z_line.png
+    - images/n_line.png
   #  - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

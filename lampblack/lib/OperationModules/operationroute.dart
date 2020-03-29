@@ -53,6 +53,7 @@ class _Operationroute extends State<Operationroute> {
     }
     // 设置初始值
     _setDefaultValue();
+    getDevideInfo();
     _buildSelecdWidget(0);
   }
 
@@ -130,7 +131,12 @@ class _Operationroute extends State<Operationroute> {
                           color:
                               _isState == true ? Colors.blue : Colors.black38,
                         ),
-                        onTap: () => _buildSelecdWidget(index),
+                        onTap: () {
+                          if (index == 0) {
+                            getDevideInfo();
+                          }
+                          _buildSelecdWidget(index);
+                        },
                       ),
                     ],
                   );
@@ -180,6 +186,7 @@ class _Operationroute extends State<Operationroute> {
 
   // 请求设备信息
   void getDevideInfo() async {
+    _pref = await SharedPreferences.getInstance();
     if (_pref != null) {
       var _did = _pref.getString(deviceIdKey);
       if (_did != null && _did.length != 0) {
@@ -195,6 +202,7 @@ class _Operationroute extends State<Operationroute> {
             _devideTime = value.data["data"]["create_time"] ?? "--------";
             _devideDesc = value.data["data"]["desc"] ?? "--------";
             _devideState = value.data["data"]["online"] ?? false;
+            _buildSelecdWidget(0);
           }
         });
       }
@@ -202,7 +210,7 @@ class _Operationroute extends State<Operationroute> {
   }
 
   // 选择那个模块
-  void _buildSelecdWidget(int index) {
+  void _buildSelecdWidget(int index) async {
     var key = "key_$_curIndex";
     stateMap[key] = false;
     var _key = "key_$index";
@@ -211,7 +219,6 @@ class _Operationroute extends State<Operationroute> {
 
     Widget widget;
     if (index == 0) {
-      getDevideInfo();
       widget = Container(
         color: Colors.white,
         child: Column(
@@ -331,15 +338,28 @@ class _Operationroute extends State<Operationroute> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(left: 10, right: 10),
-                              child: Text(
-                                "在线",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.black45,
-                                ),
-                              ),
-                            ),
+                                margin: EdgeInsets.only(left: 10, right: 10),
+                                child: Row(
+                                  children: <Widget>[
+                                    Image.asset(
+                                      _devideState == true
+                                          ? "images/z_line.png"
+                                          : "images/n_line.png",
+                                      width: 18,
+                                      height: 18,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      _devideState == true ? "在线" : "掉线",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.black45,
+                                      ),
+                                    ),
+                                  ],
+                                )),
                           ],
                         ),
                         SizedBox(
