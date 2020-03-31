@@ -99,7 +99,7 @@ packages:
       path: idkitflutter
       ref: HEAD
       resolved-ref: "0d8d9fe4b0a88fc4e127cb174494680e6107a018"
-      url: "git@github.com:zhoushuangjian001/IDKitFlutter.git"
+      url: "https://github.com/zhoushuangjian001/IDKitFlutter.git"
     source: git
     version: "0.0.2"
   image:
