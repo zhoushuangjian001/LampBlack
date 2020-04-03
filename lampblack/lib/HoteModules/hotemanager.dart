@@ -142,11 +142,11 @@ class _HoteManager extends State<HoteManager> {
 
   // 定时器获取串口数据
   void timerGetSerialPortDataMethod() {
-    Timer(Duration(seconds: 1), () {
-      openedSerialPorytPlatform
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      sendCmdSerialProtDataPlatform
           .invokeMethod("sendCommandObtainSerialPortData")
           .then((data) {
-        print("串口获取数据" + data);
+        print(data);
       }).catchError((err) {
         _abnormalSetDefaultData();
         IDKitToast.showText(context, "Failed to get serial data");
