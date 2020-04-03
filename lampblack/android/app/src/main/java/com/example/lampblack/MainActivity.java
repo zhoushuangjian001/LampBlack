@@ -39,7 +39,9 @@ public class MainActivity extends FlutterActivity implements SerialCallBack {
 
   // 打开串口的方法
   public boolean callOpendSerialportMethod () {
-
+    if (SerialPortUtil.isFlagSerial) {
+      return true;
+    }
     return SerialPortUtil.open("/dev/ttyS3",9600,0);
   }
 
