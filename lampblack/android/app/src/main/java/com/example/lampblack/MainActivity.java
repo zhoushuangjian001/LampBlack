@@ -19,7 +19,6 @@ public class MainActivity extends FlutterActivity implements SerialCallBack {
   // 发送指令获取串口信息
   private String _serialProtData = "";
 
-
   @Override
   public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
     GeneratedPluginRegistrant.registerWith(flutterEngine);
@@ -32,24 +31,24 @@ public class MainActivity extends FlutterActivity implements SerialCallBack {
         });
     // 发送指令获取串口信息
     new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), SerialportDataChannel)
-            .setMethodCallHandler((call, result) -> {
-              result.success(sendCommandObtainSerialPortData());
-            });
+        .setMethodCallHandler((call, result) -> {
+          result.success(sendCommandObtainSerialPortData());
+        });
   }
 
   // 打开串口的方法
-  public boolean callOpendSerialportMethod () {
+  public boolean callOpendSerialportMethod() {
     if (SerialPortUtil.isFlagSerial) {
       return true;
     }
-    return SerialPortUtil.open("/dev/ttyS3",9600,0);
+    return SerialPortUtil.open("/dev/ttyS3", 9600, 0);
   }
 
   // 发送获取串口信息
-  public String sendCommandObtainSerialPortData () {
-    byte[] yyByte1={0x04, 0x03, 0x00, 0x00, 0x00, 0x05};
+  public String sendCommandObtainSerialPortData() {
+    byte[] yyByte1 = { 0x04, 0x03, 0x00, 0x00, 0x00, 0x05 };
     SerialPortUtil.sendString(ByteUtil.getCRC_16(yyByte1));
-    return  _serialProtData;
+    return "安卓传给Flutter的数据";
   }
 
   // SerialCallBack 串口信息回调方法
