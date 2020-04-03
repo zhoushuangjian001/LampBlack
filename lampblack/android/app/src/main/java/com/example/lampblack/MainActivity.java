@@ -1,27 +1,58 @@
 package com.example.lampblack;
 
 import androidx.annotation.NonNull;
+
+import android_serialport_api.SerialPortUtil;
+import callback.SerialCallBack;
+import callback.SerialPortCallBackUtils;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
+import util.ByteUtil;
 
-public class MainActivity extends FlutterActivity {
-  private static final String CHANNEL = "samples.flutter.dev/battery";
+public class MainActivity extends FlutterActivity implements SerialCallBack {
+  // 打开串口渠道
+  private static final String SerialportChannel = "com.lamp.serialport";
+  // 发送指令获取串口信息的渠道
+  private static final String SerialportDataChannel = "com.lamp.serialportdata";
+  // 发送指令获取串口信息
+  private String _serialProtData = "";
+
 
   @Override
   public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
     GeneratedPluginRegistrant.registerWith(flutterEngine);
-    new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
+    // 注册串口数据回调函数
+    SerialPortCallBackUtils.setCallBack(this);
+    // 打开串口方法
+    new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), SerialportChannel)
         .setMethodCallHandler((call, result) -> {
-          result.success(getSumOfNumber());
+          result.success(callOpendSerialportMethod());
         });
+    // 发送指令获取串口信息
+    new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), SerialportDataChannel)
+            .setMethodCallHandler((call, result) -> {
+              result.success(sendCommandObtainSerialPortData());
+            });
   }
 
-  public int getSumOfNumber() {
-    int max = 100, min = 1;
-    int ran = (int) (Math.random() * (max - min) + min);
-    return ran;
+  // 打开串口的方法
+  public boolean callOpendSerialportMethod () {
+
+    return SerialPortUtil.open("/dev/ttyS3",9600,0);
   }
 
+  // 发送获取串口信息
+  public String sendCommandObtainSerialPortData () {
+    byte[] yyByte1={0x04, 0x03, 0x00, 0x00, 0x00, 0x05};
+    SerialPortUtil.sendString(ByteUtil.getCRC_16(yyByte1));
+    return  _serialProtData;
+  }
+
+  // SerialCallBack 串口信息回调方法
+  @Override
+  public void onSerialPortData(String serialPortData) {
+    _serialProtData = serialPortData;
+  }
 }

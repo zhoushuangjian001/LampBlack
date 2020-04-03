@@ -1,4 +1,4 @@
-include ':app'
+include ':app', ':SerialportLibrary'
 
 def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
 
