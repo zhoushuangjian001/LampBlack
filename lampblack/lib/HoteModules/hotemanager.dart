@@ -146,7 +146,7 @@ class _HoteManager extends State<HoteManager> {
       sendCmdSerialProtDataPlatform
           .invokeMethod("sendCommandObtainSerialPortData")
           .then((data) {
-        print(data);
+        print("串口数据:" + data);
       }).catchError((err) {
         _abnormalSetDefaultData();
         IDKitToast.showText(context, "Failed to get serial data");
