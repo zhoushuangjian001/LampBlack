@@ -63,7 +63,9 @@ class _HoteManager extends State<HoteManager> {
     _humidityValue = 0;
 
     // 打开串口
-    openedSerialPort();
+    //openedSerialPort();
+
+    timerGetSerialPortDataMethod();
   }
 
   // 异常数据初始化
@@ -143,28 +145,44 @@ class _HoteManager extends State<HoteManager> {
   // 定时器获取串口数据
   void timerGetSerialPortDataMethod() {
     Timer.periodic(Duration(seconds: 1), (timer) {
-      sendCmdSerialProtDataPlatform
-          .invokeMethod("sendCommandObtainSerialPortData")
-          .then((data) {
-        var dataStr = data as String;
-        List dataList = dataStr.split("");
-        IDKitToast.showText(context, dataStr);
-        setState(() {
-          // 油烟浓度
-          _lampblackConcentrationValue = _serialDataAnalysis(dataList, 3, 1000);
-          // 颗粒物
-          _particleConcentrationValue = _serialDataAnalysis(dataList, 5, 1000);
-          // 非甲烷浓度
-          _nonMethaneTotalHydrocarbonConcentrationValue =
-              _serialDataAnalysis(dataList, 11, 1000);
-          // 温度
-          _temperatureValue = _serialDataAnalysis(dataList, 9, 10);
-          // 湿度
-          _humidityValue = _serialDataAnalysis(dataList, 7, 10);
-        });
-      }).catchError((err) {
-        _abnormalSetDefaultData();
-        IDKitToast.showText(context, "Failed to get serial data");
+      // sendCmdSerialProtDataPlatform
+      //     .invokeMethod("sendCommandObtainSerialPortData")
+      //     .then((data) {
+      //   var dataStr = data as String;
+      //   List dataList = dataStr.split("");
+      //   IDKitToast.showText(context, dataStr);
+      //   setState(() {
+      //     // 油烟浓度
+      //     _lampblackConcentrationValue = _serialDataAnalysis(dataList, 3, 1000);
+      //     // 颗粒物
+      //     _particleConcentrationValue = _serialDataAnalysis(dataList, 5, 1000);
+      //     // 非甲烷浓度
+      //     _nonMethaneTotalHydrocarbonConcentrationValue =
+      //         _serialDataAnalysis(dataList, 11, 1000);
+      //     // 温度
+      //     _temperatureValue = _serialDataAnalysis(dataList, 9, 10);
+      //     // 湿度
+      //     _humidityValue = _serialDataAnalysis(dataList, 7, 10);
+      //   });
+      // }).catchError((err) {
+      //   _abnormalSetDefaultData();
+      //   IDKitToast.showText(context, "Failed to get serial data");
+      // });
+      var dataStr = "040806010101010101010101010101";
+      List dataList = dataStr.split("");
+      IDKitToast.showText(context, dataStr);
+      setState(() {
+        // 油烟浓度
+        _lampblackConcentrationValue = _serialDataAnalysis(dataList, 3, 1000);
+        // 颗粒物
+        _particleConcentrationValue = _serialDataAnalysis(dataList, 5, 1000);
+        // 非甲烷浓度
+        _nonMethaneTotalHydrocarbonConcentrationValue =
+            _serialDataAnalysis(dataList, 11, 1000);
+        // 温度
+        _temperatureValue = _serialDataAnalysis(dataList, 9, 10);
+        // 湿度
+        _humidityValue = _serialDataAnalysis(dataList, 7, 10);
       });
     });
   }
@@ -172,7 +190,7 @@ class _HoteManager extends State<HoteManager> {
   // 串口数据解析
   double _serialDataAnalysis(List list, int start, int scale) {
     if (list == null || list.length == 0) return 0;
-    if (list.length < start || list.length > (start + 1)) return 0;
+    if (list.length < start || list.length < (start + 1)) return 0;
     if (scale == 0) return 0;
     return (256 * double.parse(list[start]) + double.parse(list[start + 1])) /
         scale;
