@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:idkitflutter/IDKit/IDKitToast.dart';
+import 'package:lampblack/HoteModules/middledial.dart';
+import 'package:lampblack/HoteModules/smalldial.dart';
 import 'dialdraw.dart';
 import 'linechartbig.dart';
 import 'linechartsmall.dart';
@@ -98,9 +99,9 @@ class _HoteManager extends State<HoteManager> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    DialDraw("油烟浓度", "mg/m3", _lampblackConcentrationValue),
-                    DialDraw("颗粒物浓度", "mg/m3", _particleConcentrationValue),
-                    DialDraw("非甲烷总烃", "mg/m3",
+                    SmallDial("油烟浓度", "mg/m3", _lampblackConcentrationValue),
+                    SmallDial("颗粒物浓度", "mg/m3", _particleConcentrationValue),
+                    MiddleDial("非甲烷总烃", "mg/m3",
                         _nonMethaneTotalHydrocarbonConcentrationValue),
                     DialDraw("温度", "˚C", _temperatureValue),
                     DialDraw("湿度", "%RH", _humidityValue),
@@ -148,7 +149,6 @@ class _HoteManager extends State<HoteManager> {
           .then((data) {
         var dataStr = data as String;
         List dataList = dataStr.split("");
-        IDKitToast.showText(context, dataStr);
         setState(() {
           // 油烟浓度
           _lampblackConcentrationValue = _serialDataAnalysis(dataList, 3, 1000);
