@@ -148,6 +148,7 @@ class _HoteManager extends State<HoteManager> {
           .then((data) {
         var dataStr = data as String;
         List dataList = dataStr.split("");
+        IDKitToast.showText(context, dataStr);
         setState(() {
           // 油烟浓度
           _lampblackConcentrationValue = _serialDataAnalysis(dataList, 3, 1000);
