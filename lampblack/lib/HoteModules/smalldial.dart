@@ -66,7 +66,7 @@ class DialPainter extends CustomPainter {
   void drawIndicatorPicture(Canvas canvas, Size size, double value) {
     double halfWidth = size.width * 0.5;
     double halfHeight = size.height * 0.5;
-    double unitAngle = 2 * pi / 23;
+    double unitAngle = 2 * pi / 26;
     double angle;
     // 处理越界值
     if (value < 0) value = 0;
