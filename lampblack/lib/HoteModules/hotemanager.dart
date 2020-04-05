@@ -146,12 +146,33 @@ class _HoteManager extends State<HoteManager> {
       sendCmdSerialProtDataPlatform
           .invokeMethod("sendCommandObtainSerialPortData")
           .then((data) {
-        print("串口数据:" + data);
-        IDKitToast.showText(context, "串口数据:" + data);
+        var dataStr = data as String;
+        List dataList = dataStr.split("");
+        setState(() {
+          // 油烟浓度
+          _lampblackConcentrationValue = _serialDataAnalysis(dataList, 3, 1000);
+          // 颗粒物
+          _particleConcentrationValue = _serialDataAnalysis(dataList, 5, 1000);
+          // 非甲烷浓度
+          _nonMethaneTotalHydrocarbonConcentrationValue =
+              _serialDataAnalysis(dataList, 11, 1000);
+          // 温度
+          _temperatureValue = _serialDataAnalysis(dataList, 9, 10);
+          // 湿度
+          _humidityValue = _serialDataAnalysis(dataList, 7, 10);
+        });
       }).catchError((err) {
         _abnormalSetDefaultData();
         IDKitToast.showText(context, "Failed to get serial data");
       });
     });
+  }
+
+  // 串口数据解析
+  double _serialDataAnalysis(List list, int start, int scale) {
+    if (list == null || list.length == 0) return 0;
+    if (list.length < start || list.length > (start + 1)) return 0;
+    if (scale == 0) return 0;
+    return (256 * list[start] + list[start + 1]) / scale;
   }
 }
