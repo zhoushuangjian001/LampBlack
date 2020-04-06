@@ -186,7 +186,7 @@ class _HoteManager extends State<HoteManager> {
   }
 
   // 字符串转16进制
-  List<String> _to16List(String numstr) {
+  List _to16List(String numstr) {
     List _list = [];
     for (int i = 0; i < numstr.length; i++) {
       if (i % 2 != 0) {
