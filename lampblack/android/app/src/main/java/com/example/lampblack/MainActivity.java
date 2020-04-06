@@ -32,7 +32,8 @@ public class MainActivity extends FlutterActivity implements SerialCallBack {
     // 发送指令获取串口信息
     new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), SerialportDataChannel)
         .setMethodCallHandler((call, result) -> {
-          result.success(sendCommandObtainSerialPortData());
+          String cmd = (String)call.arguments;
+          result.success(sendCommandObtainSerialPortData(cmd));
         });
   }
 
@@ -45,9 +46,8 @@ public class MainActivity extends FlutterActivity implements SerialCallBack {
   }
 
   // 发送获取串口信息
-  public String sendCommandObtainSerialPortData() {
-    String sendStr = "040300000005859C";
-    SerialPortUtil.sendString(sendStr);
+  public String sendCommandObtainSerialPortData(String cmd) {
+    SerialPortUtil.sendString(cmd);
     return _serialProtData;
   }
 

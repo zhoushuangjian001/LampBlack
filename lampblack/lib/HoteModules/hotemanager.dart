@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:idkitflutter/IDKit/IDKitToast.dart';
 import 'package:lampblack/HoteModules/middledial.dart';
 import 'package:lampblack/HoteModules/smalldial.dart';
+import 'package:lampblack/IDKit/IDKitAlert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dialdraw.dart';
 import 'linechartbig.dart';
 import 'linechartsmall.dart';
@@ -34,12 +36,17 @@ class _HoteManager extends State<HoteManager> {
   double smally = 210 * 1.0 / 20;
   double bigally = 210 * 1.0 / 100;
 
+  // 串口发送指令
+  static const String serialSendCmd = "com.serilasend.cmd";
+
   // 打开串口的方法
   static const openedSerialPorytPlatform =
       const MethodChannel('com.lamp.serialport');
   // 发送指令获取串口信息
   static const sendCmdSerialProtDataPlatform =
       const MethodChannel('com.lamp.serialportdata');
+  // 缓存对象
+  SharedPreferences _pref;
 
   // 油烟浓度值
   double _lampblackConcentrationValue;
@@ -62,9 +69,15 @@ class _HoteManager extends State<HoteManager> {
     _nonMethaneTotalHydrocarbonConcentrationValue = 0;
     _temperatureValue = 0;
     _humidityValue = 0;
-
+    // 获取存储值
+    _getSharePref();
     // 打开串口
     openedSerialPort();
+  }
+
+  // 获取缓存对象
+  void _getSharePref() async {
+    _pref = await SharedPreferences.getInstance();
   }
 
   // 异常数据初始化
@@ -143,9 +156,23 @@ class _HoteManager extends State<HoteManager> {
 
   // 定时器获取串口数据
   void timerGetSerialPortDataMethod() {
+    var _cmd = _pref.getString(serialSendCmd);
+    if (_cmd == null || _cmd.length == 0) {
+      IDKitAlert.alert(context,
+          title: "温馨提示",
+          content: "清先注册发射指令",
+          actions: ["确定"], clickMethod: (index) {
+        Navigator.of(context).pop();
+        IDKitAlert.removeAlert();
+      });
+      return;
+    }
     Timer.periodic(Duration(seconds: 1), (timer) {
       sendCmdSerialProtDataPlatform
-          .invokeMethod("sendCommandObtainSerialPortData")
+          .invokeMethod(
+        "sendCommandObtainSerialPortData",
+        _cmd,
+      )
           .then((data) {
         var numstr = data as String;
         if (numstr.length == 0 || numstr == null) {

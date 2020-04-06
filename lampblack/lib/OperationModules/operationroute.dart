@@ -13,8 +13,10 @@ class Operationroute extends StatefulWidget {
 class _Operationroute extends State<Operationroute> {
   static const String apikey = "B=zpzEVugV0VJ5nbbnw3aGba124=";
   static const String deviceIdKey = "com.lamp_device_id_key";
+  // 串口发送指令
+  static const String serialSendCmd = "com.serilasend.cmd";
   // 设备信息默认设置
-  static const List<String> _list = ["设备状态栏", "设备新增和更新", "其他"];
+  static const List<String> _list = ["设备状态栏", "设备新增和更新", "串口发送指令"];
   Map stateMap = Map();
   Widget _widget;
   int _curIndex;
@@ -24,6 +26,7 @@ class _Operationroute extends State<Operationroute> {
   String _devideTime;
   String _devideDesc;
   bool _devideState;
+  String _cmdString;
   // 缓存对象
   SharedPreferences _pref;
   // 设置默认值
@@ -35,6 +38,7 @@ class _Operationroute extends State<Operationroute> {
     _devideDesc = "--------";
     _devideId = "--------";
     _devideState = false;
+    _cmdString = "-------";
   }
 
   // 获取缓存对象
@@ -732,9 +736,128 @@ class _Operationroute extends State<Operationroute> {
         },
         itemCount: 1,
       );
-    } else {
+    } else if (index == 2) {
+      _cmdString = _pref.getString(serialSendCmd);
+      var _cmdVc = TextEditingController();
       widget = Container(
-        color: Colors.pink,
+        color: Colors.white,
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(
+                  bottom: 5,
+                ),
+                width: double.infinity,
+                child: Text(
+                  "原串口发送指令:",
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                child: Text(
+                  _cmdString,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black38,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  top: 10,
+                ),
+                width: double.infinity,
+                child: Text(
+                  "新串口发送指令:",
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                height: 44,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: _cmdVc,
+                        decoration: InputDecoration(
+                          hintText: "请输入发送指令",
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    GestureDetector(
+                      child: Container(
+                        width: 300,
+                        color: Colors.blue,
+                        child: Center(
+                          child: Text(
+                            "发送该指令",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        var _value = _cmdVc.value.text;
+                        if (_value.length == 0) {
+                          IDKitToast.showText(context, "请输入发送指令");
+                          return;
+                        }
+                        var _cmd = _pref.getString(serialSendCmd);
+                        if (_cmd == null || _cmd.length == 0) {
+                          // 存储 cmd
+                          _pref.setString(serialSendCmd, _value);
+                          setState(() {
+                            _cmdString = _value;
+                            _buildSelecdWidget(2);
+                          });
+                          IDKitToast.showText(context, "发送指令成功");
+                        } else if (_value == _cmd) {
+                          IDKitToast.showText(context, "发送指令与元指令相同");
+                        } else {
+                          IDKitAlert.alert(
+                            context,
+                            title: "温馨提示",
+                            content: "是否确定更改发送指令",
+                            actions: ["取消", "确定"],
+                            clickMethod: (index) {
+                              if (index == 0) {
+                                IDKitAlert.removeAlert();
+                              } else {
+                                _pref.setString(serialSendCmd, _value);
+                                setState(() {
+                                  _cmdString = _value;
+                                  _buildSelecdWidget(2);
+                                });
+                                IDKitToast.showText(context, "发送指令成功");
+                                IDKitAlert.removeAlert();
+                              }
+                            },
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
     setState(() {
