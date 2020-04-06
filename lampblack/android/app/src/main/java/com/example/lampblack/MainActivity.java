@@ -46,8 +46,8 @@ public class MainActivity extends FlutterActivity implements SerialCallBack {
 
   // 发送获取串口信息
   public String sendCommandObtainSerialPortData() {
-    byte[] yyByte1 = { 0x04, 0x03, 0x00, 0x00, 0x00, 0x05 };
-    SerialPortUtil.sendString(ByteUtil.getCRC_16(yyByte1));
+    String sendStr = "040300000005859C";
+    SerialPortUtil.sendString(sendStr);
     return _serialProtData;
   }
 
