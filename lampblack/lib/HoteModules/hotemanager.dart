@@ -182,8 +182,7 @@ class _HoteManager extends State<HoteManager> {
     if (list == null || list.length == 0) return 0;
     if (list.length < start || list.length < (start + 1)) return 0;
     if (scale == 0) return 0;
-    return (256 * double.parse(list[start]) + double.parse(list[start + 1])) /
-        scale;
+    return (256 * int.parse(list[start]) + int.parse(list[start + 1])) / scale;
   }
 
   // 字符串转16进制
