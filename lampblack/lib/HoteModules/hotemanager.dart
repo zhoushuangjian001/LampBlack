@@ -147,8 +147,8 @@ class _HoteManager extends State<HoteManager> {
       sendCmdSerialProtDataPlatform
           .invokeMethod("sendCommandObtainSerialPortData")
           .then((data) {
-        var dataStr = data as String;
-        List dataList = dataStr.split("");
+        var numstr = data as String;
+        List dataList = _to16List(numstr);
         setState(() {
           // 油烟浓度
           _lampblackConcentrationValue = _serialDataAnalysis(dataList, 3, 1000);
@@ -176,5 +176,17 @@ class _HoteManager extends State<HoteManager> {
     if (scale == 0) return 0;
     return (256 * double.parse(list[start]) + double.parse(list[start + 1])) /
         scale;
+  }
+
+  // 字符串转16进制
+  List<String> _to16List(String numstr) {
+    List _list = [];
+    for (int i = 0; i < numstr.length; i++) {
+      if (i % 2 != 0) {
+        var c = numstr.substring(i - 1, i + 1);
+        _list.add("0x" + c);
+      }
+    }
+    return _list;
   }
 }
