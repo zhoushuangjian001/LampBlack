@@ -148,7 +148,15 @@ class _HoteManager extends State<HoteManager> {
           .invokeMethod("sendCommandObtainSerialPortData")
           .then((data) {
         var numstr = data as String;
+        if (numstr.length == 0 || numstr == null) {
+          _abnormalSetDefaultData();
+          return;
+        }
         List dataList = _to16List(numstr);
+        if (dataList.length < 12) {
+          _abnormalSetDefaultData();
+          return;
+        }
         setState(() {
           // 油烟浓度
           _lampblackConcentrationValue = _serialDataAnalysis(dataList, 3, 1000);
