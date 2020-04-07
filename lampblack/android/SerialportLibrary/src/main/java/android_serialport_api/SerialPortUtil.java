@@ -83,7 +83,7 @@ public class SerialPortUtil {
             return;
         }
         try {
-            outputStream.write(ByteUtil.hex2byte(data));
+            outputStream.write(ByteUtil.HexToByteArr(data));
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
