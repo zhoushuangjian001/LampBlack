@@ -17,6 +17,7 @@ class HoteManager extends StatefulWidget {
 }
 
 class _HoteManager extends State<HoteManager> {
+  // 滚动偏移（分钟为准）
   double jumpValue = 0;
   // 温度点组
   List<Offset> temperaturePoints = [];
@@ -33,7 +34,7 @@ class _HoteManager extends State<HoteManager> {
   // X 轴的总长度
   double xAxisLength = 9600;
   // X 轴每分钟的长度
-  double xMinuteLength = (10000 - 10000 * 1.0 / 24) / 1440;
+  double xMinuteLength;
 
   /// Y 轴配置
   // Y 轴的总长度
@@ -81,6 +82,8 @@ class _HoteManager extends State<HoteManager> {
     // 刻度值初始化
     ySmallUnitValue = (yAsixLength - yAsixTop) / 20;
     yBigUnitValue = ySmallUnitValue / 5;
+    xMinuteLength = xAxisLength / 1440;
+
     // 初始化参数值
     _lampblackConcentrationValue = 0;
     _particleConcentrationValue = 0;
@@ -90,25 +93,42 @@ class _HoteManager extends State<HoteManager> {
     // 获取存储值
     _getSharePref();
     // 打开串口
-    openedSerialPort();
+    // openedSerialPort();
+    testLineChar();
   }
 
   /// 测试刻度线
   void testLineChar() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      var value = 10;
-      jumpValue++;
-      // 颗粒物数据转化为点
-      double dy = yAsixLength - value * ySmallUnitValue;
-      Offset point = Offset(jumpValue, dy);
-      particulatePoints.add(point);
+    Timer.periodic(Duration(seconds: 10), (timer) {
+      double value = 10;
       // 油烟浓度数据转化为点
     });
   }
 
   // X 轴点的获取
   double xAxsiValue() {
-    return 0;
+    DateTime time = DateTime.now();
+    int hour = time.hour;
+    int minute = time.minute;
+    int second = time.second;
+    // 跳转值
+    if (hour == 0) {
+      jumpValue = 0;
+      removeAllPoints();
+    } else {
+      jumpValue = hour * xAxisLength / 24;
+    }
+    // 转化为分
+    double value = hour * 60 + minute + second / 60;
+    return value * xMinuteLength + xStartOffset;
+  }
+
+  // 清空所有点数组
+  void removeAllPoints() {
+    temperaturePoints = [];
+    humidityPoints = [];
+    particulatePoints = [];
+    humidityPoints = [];
   }
 
   // 值转化为点
@@ -171,10 +191,17 @@ class _HoteManager extends State<HoteManager> {
                     Expanded(
                       // 颗粒物 & 油烟
                       child: SmallLineChart(
-                          particulatePoints, lampPoints, jumpValue),
+                        particulatePoints,
+                        lampPoints,
+                        jumpValue,
+                      ),
                     ),
                     Expanded(
-                      child: BigLineChart(),
+                      child: BigLineChart(
+                        temperaturePoints,
+                        humidityPoints,
+                        jumpValue,
+                      ),
                     )
                   ],
                 ),
@@ -213,7 +240,7 @@ class _HoteManager extends State<HoteManager> {
       });
       return;
     }
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(Duration(seconds: timeInterval), (timer) {
       sendCmdSerialProtDataPlatform
           .invokeMethod(
         "sendCommandObtainSerialPortData",
@@ -244,6 +271,21 @@ class _HoteManager extends State<HoteManager> {
           _temperatureValue = _serialDataAnalysis(dataList, 9, 10);
           // 湿度
           _humidityValue = _serialDataAnalysis(dataList, 7, 10);
+
+          /// 数组点的操作
+          // 颗粒物
+          yAxsiValueToPoint(particulatePoints, xAxsiValue(),
+              _particleConcentrationValue, ySmallUnitValue);
+          // 油烟浓度
+          yAxsiValueToPoint(lampPoints, xAxsiValue(),
+              _lampblackConcentrationValue, ySmallUnitValue);
+
+          // 温度
+          yAxsiValueToPoint(temperaturePoints, xAxsiValue(), _temperatureValue,
+              yBigUnitValue);
+          // 湿度
+          yAxsiValueToPoint(
+              humidityPoints, xAxsiValue(), _humidityValue, yBigUnitValue);
         });
       }).catchError((err) {
         _abnormalSetDefaultData();

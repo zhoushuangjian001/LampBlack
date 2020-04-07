@@ -10,55 +10,68 @@ class SmallLineChart extends StatelessWidget {
   final List<Offset> lampPoints;
   final double jumpValue;
   SmallLineChart(this.beadPoints, this.lampPoints, this.jumpValue);
-  double k = 0;
   Picture _bgReseau;
-    // 初始配置
-  List<String> marks = ["0","2","4","6","8","10","12","14","16","18","20"];
-  void initConfig (){
+  // 初始配置
+  List<String> marks = [
+    "0",
+    "2",
+    "4",
+    "6",
+    "8",
+    "10",
+    "12",
+    "14",
+    "16",
+    "18",
+    "20"
+  ];
+  void initConfig() {
     Size size = Size(10000, 270);
     _bgReseau = ScrollReseau(marks.length, size).getBgView();
   }
+
   // ScrollController
   ScrollController _scrollC1 = ScrollController();
 
-  void finshUi(){
-    WidgetsBinding.instance.addPostFrameCallback((value){
+  void finshUi() {
+    WidgetsBinding.instance.addPostFrameCallback((value) {
       _scrollC1.jumpTo(jumpValue);
     });
   }
+
   @override
   Widget build(BuildContext context) {
     finshUi();
     initConfig();
     return Center(
-      child: Container(
-        width: 512,
-        color: Colors.white38,
-        child: Column(
-          children: <Widget>[
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  CustomPaint(
-                    size: Size(150, 30),
-                    painter: LineChartTopItemView("颗粒物浓度", Colors.red),
-                  ),
-                  CustomPaint(
-                    size: Size(140, 30),
-                    painter: LineChartTopItemView("油烟浓度", Colors.blue),
-                  )
-                ],
-              ),
+        child: Container(
+      width: 512,
+      color: Colors.white38,
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                CustomPaint(
+                  size: Size(150, 30),
+                  painter: LineChartTopItemView("颗粒物浓度", Colors.red),
+                ),
+                CustomPaint(
+                  size: Size(140, 30),
+                  painter: LineChartTopItemView("油烟浓度", Colors.blue),
+                )
+              ],
             ),
-            Container(
-              height: 270,
-              child: Row(
-                children: <Widget>[
-                  AxisYMark(marks.reversed.toList(),Size(40,270)),
-                  Container(
-                    width: 440,
-                    child: SingleChildScrollView(
+          ),
+          Container(
+            height: 270,
+            child: Row(
+              children: <Widget>[
+                AxisYMark(marks.reversed.toList(), Size(40, 270)),
+                Container(
+                  width: 440,
+                  child: SingleChildScrollView(
                       physics: NeverScrollableScrollPhysics(),
                       controller: _scrollC1,
                       scrollDirection: Axis.horizontal,
@@ -66,18 +79,16 @@ class SmallLineChart extends StatelessWidget {
                         width: 10000,
                         child: CustomPaint(
                           size: Size(10000, 270),
-                          painter: LineChart(_bgReseau,beadPoints,lampPoints),
+                          painter: LineChart(_bgReseau, beadPoints, lampPoints),
                         ),
-                      )
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      )
-    );
+                      )),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    ));
   }
 }
 
@@ -97,25 +108,20 @@ class LineChartTopItemView extends CustomPainter {
       ..color = color
       ..strokeWidth = lineWidth
       ..style = PaintingStyle.stroke;
-    var p1 = Offset(10, height *0.5 - lineWidth *0.5);
-    var p2 = Offset(60, height *0.5 - lineWidth *0.5);
+    var p1 = Offset(10, height * 0.5 - lineWidth * 0.5);
+    var p2 = Offset(60, height * 0.5 - lineWidth * 0.5);
     canvas.drawLine(p1, p2, paint);
     canvas.save();
     paint.style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(35, height * 0.5 - lineWidth *0.5), 5, paint);
+    canvas.drawCircle(Offset(35, height * 0.5 - lineWidth * 0.5), 5, paint);
     canvas.restore();
     TextPainter textPainter = TextPainter()
       ..textDirection = TextDirection.ltr
       ..text = TextSpan(
-        text: title,
-        style: TextStyle(
-          fontSize: 12,
-          color: Colors.black
-        )
-      )
+          text: title, style: TextStyle(fontSize: 12, color: Colors.black))
       ..layout();
     double textpointX = width - 70;
-    double textpointY = height *0.5 - textPainter.size.height *0.5;
+    double textpointY = height * 0.5 - textPainter.size.height * 0.5;
     textPainter.paint(canvas, Offset(textpointX, textpointY));
     canvas.restore();
   }
@@ -125,7 +131,6 @@ class LineChartTopItemView extends CustomPainter {
     return true;
   }
 }
-
 
 /// 折线图
 class LineChart extends CustomPainter {

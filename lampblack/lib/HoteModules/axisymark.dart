@@ -28,28 +28,25 @@ class DrawAxisMark extends CustomPainter {
     double setTop = 20;
     double setBottom = 40;
     // Y轴每次偏移
-    double everyOffsetAxisY = (size.height - setTop - setBottom) * 1.0/(marks.length - 1);
+    double everyOffsetAxisY =
+        (size.height - setTop - setBottom) * 1.0 / (marks.length - 1);
     canvas.save();
     Paint paint = Paint()
       ..color = Colors.black
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke;
     Offset p1 = Offset(size.width - 2, 0);
-    Offset p2 = Offset(size.width - 2,size.height - setBottom);
+    Offset p2 = Offset(size.width - 2, size.height - setBottom);
     canvas.drawLine(p1, p2, paint);
 
     // 绘制刻度
-    for(int i = 0; i < marks.length - 1; i++){
+    for (int i = 0; i < marks.length; i++) {
       TextPainter textPainter = TextPainter()
         ..textDirection = TextDirection.ltr
-        ..text = TextSpan(
-          text: marks[i],
-          style: TextStyle(
-            color: Colors.red
-          )
-        )
+        ..text = TextSpan(text: marks[i], style: TextStyle(color: Colors.red))
         ..layout();
-      Offset axis = Offset(size.width - textPainter.size.width - 5, setTop + i * everyOffsetAxisY - textPainter.size.height *0.5);
+      Offset axis = Offset(size.width - textPainter.size.width - 5,
+          setTop + i * everyOffsetAxisY - textPainter.size.height * 0.5);
       textPainter.paint(canvas, axis);
     }
     canvas.restore();
