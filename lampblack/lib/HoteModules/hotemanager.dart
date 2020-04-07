@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:idkitflutter/IDKit/IDKitToast.dart';
@@ -16,25 +17,38 @@ class HoteManager extends StatefulWidget {
 }
 
 class _HoteManager extends State<HoteManager> {
-  double currentValue = 0;
-  double time = 0;
-  double value;
   double jumpValue = 0;
-  List<Offset> points = [];
-  List<Offset> points1 = [];
+  // 温度点组
+  List<Offset> temperaturePoints = [];
+  // 湿度点组
+  List<Offset> humidityPoints = [];
+  // 颗粒物点组
+  List<Offset> particulatePoints = [];
+  // 油烟浓度点组
+  List<Offset> lampPoints = [];
+
+  /// X 轴的配置
   // X 轴的起始固定偏移
-  double offsetx = 0;
+  double xStartOffset = 0;
   // X 轴的总长度
-  double axisxAllLength = 10000 - 10000 * 1.0 / 24;
-  // 每分钟的长度
-  double minuteLength = (10000 - 10000 * 1.0 / 24) / 1440;
-  // Y 的顶部偏移
-  double offsetTop = 20;
+  double xAxisLength = 9600;
+  // X 轴每分钟的长度
+  double xMinuteLength = (10000 - 10000 * 1.0 / 24) / 1440;
+
+  /// Y 轴配置
   // Y 轴的总长度
-  double axisyAllLength = 230;
-  // Y 轴刻度值
-  double smally = 210 * 1.0 / 20;
-  double bigally = 210 * 1.0 / 100;
+  double yAsixLength = 230;
+  // Y 的顶部偏移
+  double yAsixTop = 20;
+
+  /// Y 轴刻度值
+  // 20 刻度
+  double ySmallUnitValue;
+  // 100 刻度
+  double yBigUnitValue;
+
+  // 定时器取值间隔
+  int timeInterval = 1;
 
   // 串口发送指令
   static const String serialSendCmd = "com.serilasend.cmd";
@@ -45,6 +59,7 @@ class _HoteManager extends State<HoteManager> {
   // 发送指令获取串口信息
   static const sendCmdSerialProtDataPlatform =
       const MethodChannel('com.lamp.serialportdata');
+
   // 缓存对象
   SharedPreferences _pref;
 
@@ -63,6 +78,9 @@ class _HoteManager extends State<HoteManager> {
   @override
   void initState() {
     super.initState();
+    // 刻度值初始化
+    ySmallUnitValue = (yAsixLength - yAsixTop) / 20;
+    yBigUnitValue = ySmallUnitValue / 5;
     // 初始化参数值
     _lampblackConcentrationValue = 0;
     _particleConcentrationValue = 0;
@@ -73,6 +91,32 @@ class _HoteManager extends State<HoteManager> {
     _getSharePref();
     // 打开串口
     openedSerialPort();
+  }
+
+  /// 测试刻度线
+  void testLineChar() {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      var value = 10;
+      jumpValue++;
+      // 颗粒物数据转化为点
+      double dy = yAsixLength - value * ySmallUnitValue;
+      Offset point = Offset(jumpValue, dy);
+      particulatePoints.add(point);
+      // 油烟浓度数据转化为点
+    });
+  }
+
+  // X 轴点的获取
+  double xAxsiValue() {
+    return 0;
+  }
+
+  // 值转化为点
+  void yAxsiValueToPoint(
+      List<Offset> points, double dx, double value, double unitvalue) {
+    double dy = yAsixLength - value * unitvalue;
+    Offset point = Offset(dx, dy);
+    points.add(point);
   }
 
   // 获取缓存对象
@@ -125,7 +169,9 @@ class _HoteManager extends State<HoteManager> {
                 child: Row(
                   children: <Widget>[
                     Expanded(
-                      child: SmallLineChart(points, points1, jumpValue),
+                      // 颗粒物 & 油烟
+                      child: SmallLineChart(
+                          particulatePoints, lampPoints, jumpValue),
                     ),
                     Expanded(
                       child: BigLineChart(),

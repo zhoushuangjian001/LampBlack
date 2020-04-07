@@ -737,7 +737,6 @@ class _Operationroute extends State<Operationroute> {
         itemCount: 1,
       );
     } else if (index == 2) {
-      _cmdString = _pref.getString(serialSendCmd);
       var _cmdVc = TextEditingController();
       widget = Container(
         color: Colors.white,
