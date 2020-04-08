@@ -49,7 +49,7 @@ class _HoteManager extends State<HoteManager> {
   double yBigUnitValue;
 
   // 定时器取值间隔
-  int timeInterval = 1;
+  int timeInterval = 10;
 
   // 串口发送指令
   static const String serialSendCmd = "com.serilasend.cmd";
@@ -93,16 +93,7 @@ class _HoteManager extends State<HoteManager> {
     // 获取存储值
     _getSharePref();
     // 打开串口
-    // openedSerialPort();
-    testLineChar();
-  }
-
-  /// 测试刻度线
-  void testLineChar() {
-    Timer.periodic(Duration(seconds: 10), (timer) {
-      double value = 10;
-      // 油烟浓度数据转化为点
-    });
+    openedSerialPort();
   }
 
   // X 轴点的获取
