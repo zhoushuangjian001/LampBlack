@@ -241,13 +241,25 @@ class _HoteManager extends State<HoteManager> {
         var numstr = data as String;
         if (numstr.length == 0 || numstr == null) {
           _abnormalSetDefaultData();
-          IDKitToast.showText(context, "字符串为零");
+          IDKitToast.showText(
+            context,
+            "字符串为零",
+            toastStyle: ToastStyle(
+              disappearTime: 1,
+            ),
+          );
           return;
         }
         List dataList = _to16List(numstr);
         if (dataList.length < 12) {
           _abnormalSetDefaultData();
-          IDKitToast.showText(context, "数字个数不够12");
+          IDKitToast.showText(
+            context,
+            "数字个数不够12",
+            toastStyle: ToastStyle(
+              disappearTime: 1,
+            ),
+          );
           return;
         }
         setState(() {
@@ -280,7 +292,13 @@ class _HoteManager extends State<HoteManager> {
         });
       }).catchError((err) {
         _abnormalSetDefaultData();
-        IDKitToast.showText(context, "Failed to get serial data");
+        IDKitToast.showText(
+          context,
+          "Failed to get serial data",
+          toastStyle: ToastStyle(
+            disappearTime: 1,
+          ),
+        );
       });
     });
   }
