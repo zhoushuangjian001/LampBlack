@@ -133,7 +133,7 @@ class DialPainter extends CustomPainter {
     TextPainter textPainter = TextPainter()
       ..textDirection = TextDirection.ltr
       ..text = TextSpan(
-          text: value.toString(),
+          text: value.toStringAsFixed(2),
           style: TextStyle(fontSize: 30, color: textColor))
       ..layout();
     double textPointX = -textPainter.size.width * 0.5;

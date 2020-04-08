@@ -28,7 +28,8 @@ class DialDraw extends StatelessWidget {
     return Center(
       child: CustomPaint(
         size: new Size(190, 190),
-        painter: DialPainter(_dialPicture, _indicatorPicture, title, unit, value),
+        painter:
+            DialPainter(_dialPicture, _indicatorPicture, title, unit, value),
       ),
     );
   }
@@ -36,13 +37,13 @@ class DialDraw extends StatelessWidget {
 
 /// 绘制刻度盘
 class DialPainter extends CustomPainter {
-
   final Picture bgImagePicture;
   final Picture indicatorPicture;
   final String title;
   final String unit;
   final double value;
-  DialPainter(this.bgImagePicture, this.indicatorPicture, this.title, this.unit, this.value);
+  DialPainter(this.bgImagePicture, this.indicatorPicture, this.title, this.unit,
+      this.value);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -62,17 +63,17 @@ class DialPainter extends CustomPainter {
   }
 
   // 绘制指针
-  void drawIndicatorPicture(Canvas canvas, Size size, double value){
+  void drawIndicatorPicture(Canvas canvas, Size size, double value) {
     double halfWidth = size.width * 0.5;
-    double halfHeight = size.height *0.5;
-    double unitAngle  = 2 * pi / 130;
+    double halfHeight = size.height * 0.5;
+    double unitAngle = 2 * pi / 130;
     double angle;
     // 处理越界值
-    if(value < 0) value = 0;
-    if(value > 100) value = 100;
+    if (value < 0) value = 0;
+    if (value > 100) value = 100;
     // 计算角度
-    if(value <= 50) {
-      angle = - (50 - value) * unitAngle;
+    if (value <= 50) {
+      angle = -(50 - value) * unitAngle;
     } else {
       angle = (value - 50) * unitAngle;
     }
@@ -87,7 +88,7 @@ class DialPainter extends CustomPainter {
   // 绘制单位 & 标题
   void drawUnit(Canvas canvas, Size size, String text, String title) {
     double halfWidth = size.width * 0.5;
-    double halfHeight = size.height *0.5;
+    double halfHeight = size.height * 0.5;
     canvas.save();
     canvas.translate(halfWidth, halfHeight);
 
@@ -95,14 +96,9 @@ class DialPainter extends CustomPainter {
     TextPainter unitTextPainter = TextPainter()
       ..textDirection = TextDirection.ltr
       ..text = new TextSpan(
-        text: text,
-        style: TextStyle(
-          fontSize: 20,
-          color: Colors.red
-        )
-      )
+          text: text, style: TextStyle(fontSize: 20, color: Colors.red))
       ..layout();
-    double pointX = - unitTextPainter.size.width * 0.5;
+    double pointX = -unitTextPainter.size.width * 0.5;
     double pointY = -halfHeight + 50;
     unitTextPainter.paint(canvas, Offset(pointX, pointY));
 
@@ -110,16 +106,11 @@ class DialPainter extends CustomPainter {
     TextPainter titleTextPainter = TextPainter()
       ..textDirection = TextDirection.ltr
       ..text = new TextSpan(
-        text: title,
-        style: TextStyle(
-          fontSize: 18,
-          color: Colors.black
-        )
-      )
+          text: title, style: TextStyle(fontSize: 18, color: Colors.black))
       ..layout();
-    double titlePointX = - titleTextPainter.size.width * 0.5;
+    double titlePointX = -titleTextPainter.size.width * 0.5;
     double titlePointY = halfHeight - 40;
-    titleTextPainter.paint(canvas, Offset(titlePointX,titlePointY));
+    titleTextPainter.paint(canvas, Offset(titlePointX, titlePointY));
 
     canvas.restore();
   }
@@ -129,7 +120,7 @@ class DialPainter extends CustomPainter {
     double halfW = size.width * 0.5;
     double halfH = size.height * 0.5;
     Color textColor;
-    if(value <= 20) {
+    if (value <= 20) {
       textColor = Colors.green;
     } else if (value > 20 && value <= 80) {
       textColor = Colors.blue;
@@ -142,14 +133,10 @@ class DialPainter extends CustomPainter {
     TextPainter textPainter = TextPainter()
       ..textDirection = TextDirection.ltr
       ..text = TextSpan(
-        text: value.toString(),
-        style: TextStyle(
-          fontSize: 30,
-          color: textColor
-        )
-      )
+          text: value.toStringAsFixed(2),
+          style: TextStyle(fontSize: 30, color: textColor))
       ..layout();
-    double textPointX = - textPainter.size.width * 0.5;
+    double textPointX = -textPainter.size.width * 0.5;
     double textPointY = halfH - 80;
     textPainter.paint(canvas, Offset(textPointX, textPointY));
     canvas.restore();
@@ -159,7 +146,19 @@ class DialPainter extends CustomPainter {
 /// 绘制背景刻度盘
 class DarwBgImageOfDial {
   // 刻度值
-  var dialValueArray = ["0","10","20","30","40","50","60","70","80","90","100"];
+  var dialValueArray = [
+    "0",
+    "10",
+    "20",
+    "30",
+    "40",
+    "50",
+    "60",
+    "70",
+    "80",
+    "90",
+    "100"
+  ];
   // 分割大份数
   final int cutBigApartCount = 13;
   // 每个大份分割小份数
@@ -169,17 +168,17 @@ class DarwBgImageOfDial {
   DarwBgImageOfDial(this.size);
 
   /// 绘制表盘刻度
-  Picture getBgImage(){
+  Picture getBgImage() {
     // 每一份的角度
     int allCutApart = cutBigApartCount * smallApartCountInBigApart;
-    double angle = 2 * pi / allCutApart; 
+    double angle = 2 * pi / allCutApart;
     // 绘制背景图
     Canvas canvas = Canvas(_recorder);
     canvas.clipRect(new Rect.fromLTWH(0, 0, size.width, size.height));
     drewDialRule(canvas, size, angle);
     return _recorder.endRecording();
   }
-  
+
   /// 绘制刻度尺
   void drewDialRule(Canvas canvas, Size size, double angle) {
     canvas.save();
@@ -192,11 +191,26 @@ class DarwBgImageOfDial {
       ..color = Colors.green
       ..strokeWidth = 20
       ..style = PaintingStyle.stroke;
-    canvas.drawArc(new Rect.fromCircle(center: Offset(0, 0),radius: halfWidth - 15), - 41.25 * angle, angle * 10, false, paintBgRing);
+    canvas.drawArc(
+        new Rect.fromCircle(center: Offset(0, 0), radius: halfWidth - 15),
+        -41.25 * angle,
+        angle * 10,
+        false,
+        paintBgRing);
     paintBgRing.color = Colors.blue;
-    canvas.drawArc(new Rect.fromCircle(center: Offset(0, 0),radius: halfWidth - 15), - 31.25 * angle, angle * 30, false, paintBgRing);
+    canvas.drawArc(
+        new Rect.fromCircle(center: Offset(0, 0), radius: halfWidth - 15),
+        -31.25 * angle,
+        angle * 30,
+        false,
+        paintBgRing);
     paintBgRing.color = Colors.red;
-    canvas.drawArc(new Rect.fromCircle(center: Offset(0, 0),radius: halfWidth - 15), - 1.25 * angle, angle * 10, false, paintBgRing);
+    canvas.drawArc(
+        new Rect.fromCircle(center: Offset(0, 0), radius: halfWidth - 15),
+        -1.25 * angle,
+        angle * 10,
+        false,
+        paintBgRing);
 
     /// 刻度绘制
     // 画笔(整刻度)
@@ -210,15 +224,16 @@ class DarwBgImageOfDial {
       ..strokeWidth = 1
       ..style = PaintingStyle.fill;
     // 顶点单独绘制
-    drawLongLineOfDial(canvas, paintMain, halfHeight, dialValueArray[5],50);
+    drawLongLineOfDial(canvas, paintMain, halfHeight, dialValueArray[5], 50);
     // 绘制大刻度面板
     canvas.save();
-    for (int i = 51; i<= 100; i++) {
+    for (int i = 51; i <= 100; i++) {
       if (i % 2 == 0) {
         canvas.rotate(0.09666);
-        if(i % 10 == 0) {       
-          int index = (i/10).ceil();
-          drawLongLineOfDial(canvas, paintMain, halfHeight, dialValueArray[index], i);
+        if (i % 10 == 0) {
+          int index = (i / 10).ceil();
+          drawLongLineOfDial(
+              canvas, paintMain, halfHeight, dialValueArray[index], i);
         } else {
           drawShortLineOfDial(canvas, otherPaint, halfHeight);
         }
@@ -227,12 +242,13 @@ class DarwBgImageOfDial {
     canvas.restore();
     // 绘制小刻度面板
     canvas.save();
-    for (int i = 49 ; i >= 0; i--) {
-      if(i % 2 == 0) {
-        canvas.rotate(- 0.09666);
-        if(i % 10 == 0) {
-          int index = (i/10).ceil();
-          drawLongLineOfDial(canvas, paintMain, halfHeight, dialValueArray[index], i);
+    for (int i = 49; i >= 0; i--) {
+      if (i % 2 == 0) {
+        canvas.rotate(-0.09666);
+        if (i % 10 == 0) {
+          int index = (i / 10).ceil();
+          drawLongLineOfDial(
+              canvas, paintMain, halfHeight, dialValueArray[index], i);
         } else {
           drawShortLineOfDial(canvas, otherPaint, halfHeight);
         }
@@ -244,13 +260,15 @@ class DarwBgImageOfDial {
   }
 
   /// 绘制长刻度
-  void drawLongLineOfDial(Canvas canvas, Paint paint, double halfHeight, String text, int index){
+  void drawLongLineOfDial(
+      Canvas canvas, Paint paint, double halfHeight, String text, int index) {
     // 顶点和尾点处理
     var rehab = 20;
-    canvas.drawLine(new Offset(0, -halfHeight), new Offset(0, -halfHeight + rehab), paint);
+    canvas.drawLine(
+        new Offset(0, -halfHeight), new Offset(0, -halfHeight + rehab), paint);
     // 颜色变化
     var textColor;
-    if (index <= 20 ) {
+    if (index <= 20) {
       textColor = Colors.green;
     } else if (index > 20 && index <= 80) {
       textColor = Colors.blue;
@@ -260,26 +278,20 @@ class DarwBgImageOfDial {
     // 绘制文字
     TextPainter textPainter = new TextPainter()
       ..textDirection = TextDirection.ltr
-      ..text = TextSpan(
-        text: text,
-        style: TextStyle(
-          color: textColor,
-          fontSize: 13
-        )
-      )
+      ..text =
+          TextSpan(text: text, style: TextStyle(color: textColor, fontSize: 13))
       ..layout();
-      double halfPositionX = - textPainter.size.width * 0.5;
-      double halfPositionY = - halfHeight + 29;
-      textPainter.paint(canvas, new Offset(halfPositionX,halfPositionY ));
+    double halfPositionX = -textPainter.size.width * 0.5;
+    double halfPositionY = -halfHeight + 29;
+    textPainter.paint(canvas, new Offset(halfPositionX, halfPositionY));
   }
 
   /// 绘制短刻度
   void drawShortLineOfDial(Canvas canvas, Paint paint, double halfHeight) {
-    canvas.drawLine(new Offset(0, -halfHeight), new Offset(0, -halfHeight + 10), paint);
+    canvas.drawLine(
+        new Offset(0, -halfHeight), new Offset(0, -halfHeight + 10), paint);
   }
-
 }
-
 
 /// 绘制指针
 class DrawIndicator {
@@ -289,7 +301,7 @@ class DrawIndicator {
   DrawIndicator(this.size, this.value);
 
   // 绘制 path
-  Picture drawIndicator(){
+  Picture drawIndicator() {
     Canvas canvas = Canvas(_recorder);
     canvas.clipRect(new Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -300,8 +312,8 @@ class DrawIndicator {
       ..moveTo(-5, 20)
       ..lineTo(5, 20)
       ..lineTo(8, 30)
-      ..lineTo(0.5, - halfHeight + 40)
-      ..lineTo(-0.5, - halfHeight + 40)
+      ..lineTo(0.5, -halfHeight + 40)
+      ..lineTo(-0.5, -halfHeight + 40)
       ..lineTo(-8, 30)
       ..close();
     canvas.save();
